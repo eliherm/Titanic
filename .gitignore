@@ -48,3 +48,5 @@ bin/
 .classpath
 .project
 .settings/
+.cproject
+.buildpath
