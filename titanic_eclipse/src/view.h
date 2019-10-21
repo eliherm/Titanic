@@ -1,23 +1,25 @@
 /**
  * Header for view classes
  */
+
 #pragma once
 
-#include <vector>
 #include <SDL.h>
-
+#include <vector>
 using namespace std;
 
 class sprite {
 public:
 	sprite();
-	sprite(int xpos, int ypos, int width, int height);
-	void setPos(int xpos, int ypos);
-	void setDim(int width, int height);
-	int getWidth();
-	int getHeight();
-	int getXPos();
-	int getYPos();
+	sprite(const int& xpos, const int& ypos, const int& width, const int& height);
+	void setPos(const int& xpos, const int& ypos);
+	void setDim(const int& width, const int& height);
+
+	int getWidth() const;
+	int getHeight() const;
+	int getXPos() const;
+	int getYPos() const;
+
 private:
 	int xcoord;
 	int ycoord;
@@ -27,10 +29,11 @@ private:
 
 class gameDisplay {
 public:
-	gameDisplay(int hght, int wdth);
-	void levelInit(int doorX, int doorY);
-	void update(int playerX, int playerY, vector<sprite> platforms, int waterY, bool win, bool lose);
+	gameDisplay(const int& hght, const int& wdth);
+	void levelInit(const int& doorX, const int& doorY);
+	void update(const int& playerX, const int& playerY, vector<sprite> platforms, const int& waterY, bool win, bool lose);
 	void close();
+
 private:
 	SDL_Window* window;
 	int WIDTH;

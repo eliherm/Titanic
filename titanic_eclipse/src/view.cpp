@@ -14,14 +14,17 @@ sprite::sprite() {
 	this->height = 0;
 }
 
-void sprite::setPos(int xpos, int ypos) {
-	this->xcoord = xpos;
-	this->ycoord = ypos;
+sprite::sprite(const int &xpos, const int &ypos, const int &width, const int &height) {
+
 }
 
-void sprite::setDim(int width, int height) {
+void sprite::setDim(const int& width, const int& height) {
 	this->width = width;
 	this->height = height;
+}
+
+void sprite::setPos(const int &xpos, const int &ypos) {
+
 }
 
 int sprite::getWidth() {
@@ -40,10 +43,9 @@ int sprite::getYPos() {
 	return this->ycoord;
 }
 
-gameDisplay::gameDisplay(int height, int width) {
-	//initialize SDL
-
-	if(SDL_Init(SDL_INIT_VIDEO) < 0) {
+gameDisplay::gameDisplay(const int& height, const int& width) {
+	// initialize SDL
+	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
 	} else {
 		HEIGHT = height;
@@ -62,7 +64,7 @@ gameDisplay::gameDisplay(int height, int width) {
 	}
 }
 
-void gameDisplay::levelInit(int doorX, int doorY) {
+void gameDisplay::levelInit(const int& doorX, const int& doorY) {
 	//setting player, water, and door dimensions
 	player.setDim(40, 80);
 	water.setDim(WIDTH, 20);
@@ -72,7 +74,7 @@ void gameDisplay::levelInit(int doorX, int doorY) {
 	door.setPos(doorX, doorY);
 }
 
-void gameDisplay::update(int playerX, int playerY, vector<sprite> platforms, int waterY, bool win, bool lose) {
+void gameDisplay::update(const int& playerX, const int& playerY, vector<sprite> platforms, const int& waterY, bool win, bool lose) {
 	//update objects
 	player.setPos(playerX, playerY);
 	water.setPos(0, waterY);
@@ -111,8 +113,8 @@ void gameDisplay::close() {
 	//destroying everything!
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
-	renderer = NULL;
-	window = NULL;
+	renderer = nullptr;
+	window = nullptr;
 
 	//quit SDL subsystems
 	SDL_Quit();
