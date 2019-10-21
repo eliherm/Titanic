@@ -27,19 +27,19 @@ void sprite::setPos(const int &xpos, const int &ypos) {
 
 }
 
-int sprite::getWidth() {
+int sprite::getWidth() const {
 	return this->width;
 }
 
-int sprite::getHeight() {
+int sprite::getHeight() const {
 	return this->height;
 }
 
-int sprite::getXPos() {
+int sprite::getXPos() const {
 	return this->xcoord;
 }
 
-int sprite::getYPos() {
+int sprite::getYPos() const {
 	return this->ycoord;
 }
 
@@ -95,7 +95,7 @@ void gameDisplay::update(const int& playerX, const int& playerY, vector<sprite> 
 
 	//draw platforms
 	SDL_SetRenderDrawColor(renderer, 0xc2, 0xc5, 0xcc, 0xff);
-	for(int i = 0; i < platforms.size(); i++) {
+	for (int i = 0; i < platforms.size(); i++) {
 		SDL_Rect platform = {platforms.at(i).getXPos(), platforms.at(i).getYPos(), platforms.at(i).getWidth(), platforms.at(i).getHeight()};
 		SDL_RenderFillRect(renderer, &platform);
 	}
