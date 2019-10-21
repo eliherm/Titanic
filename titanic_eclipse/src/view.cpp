@@ -15,7 +15,10 @@ sprite::sprite() {
 }
 
 sprite::sprite(const int &xpos, const int &ypos, const int &width, const int &height) {
-
+	this->xcoord = xpos;
+	this->ycoord = ypos;
+	this->width = width;
+	this->height = height;
 }
 
 void sprite::setDim(const int& width, const int& height) {
