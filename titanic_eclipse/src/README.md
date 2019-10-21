@@ -1,4 +1,2 @@
 # Titanic
-
-# View branch
-This is the current working prototype of the view development branch 
+Titanic master branch as of right now contains empty skeleton files for sections to work on
