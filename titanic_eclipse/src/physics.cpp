@@ -53,4 +53,3 @@ void physicsEngine::initLevel(object player, object door, object water, vector<o
 	this->water = water;
 	this->platforms = platforms;
 }
-
