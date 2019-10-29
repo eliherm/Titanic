@@ -28,12 +28,13 @@ private:
 class physicsEngine {
 public:
 	void initLevel(object player, object door, object water, vector<object> platforms);
-	//vector<vector<object>> getCollisions();
-	//void updateObjects();
-	//vector<object> getState();
+	void updateObjects(const vector<int>& keypresses); //needs to take whatever the data format for key press input is
+	vector<object> getState();
 private:
+	float** checkCollision(object obj1, object obj2);
 	object player;
 	object door;
 	object water;
 	vector<object> platforms;
 };
+
