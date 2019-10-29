@@ -53,3 +53,22 @@ void physicsEngine::initLevel(object player, object door, object water, vector<o
 	this->water = water;
 	this->platforms = platforms;
 }
+
+vector<object> physicsEngine::getState() {
+
+    vector<object> tempVec {};
+
+	// add player -> door -> water
+	tempVec.push_back (player);
+	tempVec.push_back (door);
+	tempVec.push_back (water);
+
+	// fill tempVec with lots of data - iterate through platform vector and add to temp vec
+	for(int i=0; i < platforms.size(); i++){
+   		tempVec.push_back (platforms[i]);
+	}	
+
+
+    return tempVec;
+
+}
