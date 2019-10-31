@@ -1,7 +1,3 @@
-#include <SDL2/SDL.h>
-#include <vector>
-using namespace std;
-
 #include "keyboardInput.h"
 
 keyboardInput::keyboardInput(const SDL_Event& e) : event(e) {}
@@ -28,6 +24,26 @@ vector<int> keyboardInput::getKeyboardInput() {
             case SDLK_RIGHT:
                 keyCodes.push_back(SDLK_RIGHT);
                 break;
+
+            case SDLK_w:
+            	keyCodes.push_back(SDLK_UP);
+            	break;
+
+            case SDLK_a:
+                 keyCodes.push_back(SDLK_LEFT);
+                 break;
+
+            case SDLK_s:
+                 keyCodes.push_back(SDLK_DOWN);
+                 break;
+
+            case SDLK_d:
+            	 keyCodes.push_back(SDLK_RIGHT);
+                 break;
+
+            case SDLK_SPACE:
+                 keyCodes.push_back(SDLK_SPACE);
+                 break;
         }
     }
 
