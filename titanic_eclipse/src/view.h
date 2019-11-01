@@ -6,6 +6,7 @@
 
 #include <SDL.h>
 #include <vector>
+#include "physics.h"
 using namespace std;
 
 class sprite {
@@ -31,7 +32,7 @@ class gameDisplay {
 public:
 	gameDisplay(const int& hght, const int& wdth);
 	void levelInit(const int& doorX, const int& doorY);
-	void update(const int& playerX, const int& playerY, vector<sprite> platforms, const int& waterY, bool win, bool lose);
+	void update(vector<object> objects, bool win, bool lose);
 	void close();
 
 private:
@@ -43,3 +44,4 @@ private:
 	sprite player;
 	sprite water;
 };
+
