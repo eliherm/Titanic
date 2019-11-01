@@ -27,7 +27,8 @@ void sprite::setDim(const int& width, const int& height) {
 }
 
 void sprite::setPos(const int &xpos, const int &ypos) {
-
+	xcoord = xpos;
+	ycoord = ypos;
 }
 
 int sprite::getWidth() const {
@@ -70,17 +71,17 @@ gameDisplay::gameDisplay(const int& height, const int& width) {
 void gameDisplay::levelInit(const int& doorX, const int& doorY) {
 	//setting player, water, and door dimensions
 	player.setDim(40, 80);
-	water.setDim(WIDTH, 20);
+	water.setDim(WIDTH, HEIGHT);
 	door.setDim(40, 80);
 
 	//setting door position
 	door.setPos(doorX, doorY);
 }
 
-void gameDisplay::update(const int& playerX, const int& playerY, vector<sprite> platforms, const int& waterY, bool win, bool lose) {
+void gameDisplay::update(vector<object> objects, bool win, bool lose) {
 	//update objects
-	player.setPos(playerX, playerY);
-	water.setPos(0, waterY);
+	player.setPos(objects.at(0).getXCoord(), objects.at(0).getYCoord());
+	water.setPos(0, objects.at(2).getYCoord());
 
 	//draw background
 	SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
@@ -92,14 +93,14 @@ void gameDisplay::update(const int& playerX, const int& playerY, vector<sprite> 
 	SDL_RenderFillRect(renderer, &doorRect);
 
 	//draw water
-	SDL_Rect waterRect = {0, waterY, water.getWidth(), water.getHeight()};
+	SDL_Rect waterRect = {0, water.getYPos(), water.getWidth(), water.getHeight()};
 	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0xff, 0xff);
 	SDL_RenderFillRect(renderer, &waterRect);
 
 	//draw platforms
 	SDL_SetRenderDrawColor(renderer, 0xc2, 0xc5, 0xcc, 0xff);
-	for (int i = 0; i < platforms.size(); i++) {
-		SDL_Rect platform = {platforms.at(i).getXPos(), platforms.at(i).getYPos(), platforms.at(i).getWidth(), platforms.at(i).getHeight()};
+	for (int i = 3; i < objects.size(); i++) {
+		SDL_Rect platform = {objects.at(i).getXCoord(), objects.at(i).getYCoord(), objects.at(i).getWidth(), objects.at(i).getHeight()};
 		SDL_RenderFillRect(renderer, &platform);
 	}
 
@@ -122,3 +123,4 @@ void gameDisplay::close() {
 	//quit SDL subsystems
 	SDL_Quit();
 }
+
