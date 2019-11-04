@@ -2,11 +2,27 @@
  * Source file for physics engine
  */
 #include <vector>
+#include <cmath>
+#include <stdio.h>
 #include "physics.h"
 
-object::object(const int& xpos, const int& ypos, const float& gravity) {
+using namespace std;
+
+object::object() {
+	xcoord = 0;
+	ycoord = 0;
+	speed = 0;
+	width = 0;
+	height = 0;
+	gravity = 0;
+}
+
+object::object(const int& xpos, const int& ypos, const int& width, const int& height, const double& gravity) {
 	xcoord = xpos;
 	ycoord = ypos;
+	speed = 0;
+	this->width = width;
+	this->height = height;
 	this->gravity = gravity;
 }
 
@@ -18,36 +34,52 @@ int object::getYCoord() {
 	return ycoord;
 }
 
-int object::setCoord(const int& newx, const int& newy) {
+void object::setCoord(const int& newx, const int& newy) {
 	xcoord = newx;
 	ycoord = newy;
 }
 
-float object::getSpeed() {
+int object::getWidth() {
+	return width;
+}
+
+void object::setWidth(const int& newval) {
+	width = newval;
+}
+
+int object::getHeight() {
+	return height;
+}
+
+void object::setHeight(const int& newval) {
+	height = newval;
+}
+
+double object::getSpeed() {
 	return speed;
 }
 
-void object::setSpeed(const float& newval) {
+void object::setSpeed(const double& newval) {
 	speed = newval;
 }
 
-float object::getDir() {
+double object::getDir() {
 	return direction;
 }
 
-void object::setDir(const float& newval) {
+void object::setDir(const double& newval) {
 	direction = newval;
 }
 
-float object::getGrav() {
+double object::getGrav() {
 	return gravity;
 }
 
-void object::setGrav(const float& newval) {
+void object::setGrav(const double& newval) {
 	gravity = newval;
 }
 
-void physicsEngine::initLevel(object player, object door, object water, vector<object> platforms) {
+physicsEngine::physicsEngine(object player, object door, object water, vector<object> platforms) {
 	this->player = player;
 	this->door = door;
 	this->water = water;
@@ -71,4 +103,124 @@ vector<object> physicsEngine::getState() {
 
     return tempVec;
 
+}
+
+double* physicsEngine::lineIntersect(double vec1x, double vec1y, int p1x, int p1y, double vec2x, double vec2y, int p2x, int p2y) {
+	double* result1 = new double[2];
+	double* result2 = new double[2];
+
+	double ddet = (vec1x*vec2y) - (vec2x*vec1y);
+	if(ddet == 0) {
+		return nullptr;
+	} else {
+		double t1 = ((vec1x*(p2x - p1x)) + (vec2x*(p2y - p1y)))/ddet;
+		double t2 = -((vec1y*(p2x - p1x)) + (vec2y*(p2y - p1y)))/ddet;
+		result1[0] = (t1 * vec1x) + (double)p1x;
+		result1[1] = (t1 * vec1y) + (double)p1y;
+		result2[0] = (t2 * vec2x) + (double)p2x;
+		result2[1] = (t2 * vec2y) + (double)p2y;
+		if(result1[0] == result2[0] && result1[1] == result2[1]) {
+			//printf("Intersection detected from %d, %d, to %f, %f\n", p1x, p1y, result[0], result[1]);
+			return result1;
+		} else {
+			printf("failure\n");
+			return result1;
+		}
+	}
+}
+
+void physicsEngine::checkEdge(double** res, object obj1, object obj2, int edge) {
+	double rad = obj1.getDir();
+	double speed = obj1.getSpeed();
+	int edgelen = 0;
+	int Px = 0;
+	int Py = 0;
+
+	if(edge == 0 || edge == 2) {
+		edgelen = obj1.getWidth();
+	} else {
+		edgelen = obj1.getHeight();
+	}
+
+	for(int i = 0; i < edgelen; ++i) {
+		double** intersections;
+		intersections = new double*[4];
+		double olddist;
+		if(edge == 0) {
+			Px = obj1.getXCoord() + i;
+			Py = obj1.getYCoord();
+		} else if(edge == 1) {
+			Px = obj1.getXCoord() + obj1.getWidth();
+			Py = obj1.getYCoord() + i;
+		} else if(edge == 2) {
+			Px = obj1.getXCoord() + i;
+			Py = obj1.getYCoord() + obj1.getHeight();
+		} else {
+			Px = obj1.getXCoord();
+			Py = obj1.getYCoord() + i;
+		}
+
+		//check against top edge of target
+		intersections[0] = lineIntersect(speed * cos(rad), speed * sin(rad), Px, Py, 1.0, 0.0, obj2.getXCoord(), obj2.getYCoord());
+
+		//check against right edge of target
+		intersections[1] = lineIntersect(speed * cos(rad), speed * sin(rad), Px, Py, 0.0, -1.0, obj2.getXCoord() + obj2.getWidth(), obj2.getYCoord());
+
+		//check againt bottom edge of target
+		intersections[2] = lineIntersect(speed * cos(rad), speed * sin(rad), Px, Py, 1.0, 0.0, obj2.getXCoord(), obj2.getYCoord() + obj2.getHeight());
+
+		//check againt left edge of target
+		intersections[3] = lineIntersect(speed * cos(rad), speed * sin(rad), Px, Py, 0.0, -1.0, obj2.getXCoord(), obj2.getYCoord());
+
+		for(int i = 0; i < 3; ++i) {
+			if(intersections[i] != nullptr) {
+				double resdist = sqrt(pow(intersections[i][0] - (double)Px, 2) + pow(intersections[i][1] - (double)Py, 2));
+				if(res[i] != nullptr) {
+					if(resdist < olddist && resdist <= speed) {
+						res[i] = intersections[i];
+						olddist = resdist;
+					}
+				} else {
+					if(resdist <= speed) {
+						res[i] = intersections[i];
+						olddist = resdist;
+					}
+				}
+			}
+		}
+
+		delete intersections;
+	}
+}
+
+//ironclad collision checker returns points at which an object will pass through another object
+//when movement vector is resolved
+//returns 2d array of intersections, first intersection at top edge of obj2, moving clockwise (top -> right -> bottom -> left)
+//if no intersection occurs against an obj2 edge, that index will be nullptr
+double** physicsEngine::checkCollision(object obj1, object obj2) {
+	double** result;
+	result = new double*[4];
+	for(int i = 0; i < 4; ++i) {
+		result[i] = new double[2];
+		result[i] = nullptr;
+	}
+	//convert object velocity vector to line at object edge
+	double rad = obj1.getDir();
+	double speed = obj1.getSpeed();
+	printf("vector: [%f, %f]\n", speed * cos(rad), speed * sin(rad));
+	if(cos(rad) > 0 && sin(rad) <= 0) { //check right and down
+		checkEdge(result, obj1, obj2, 1);
+		checkEdge(result, obj1, obj2, 2);
+	} else if(cos(rad) <= 0 && sin(rad) < 0) { //check left and down
+		checkEdge(result, obj1, obj2, 3);
+		checkEdge(result, obj1, obj2, 2);
+	} else if(cos(rad) < 0 && sin(rad) >= 0){ //check left and up
+		checkEdge(result, obj1, obj2, 3);
+		checkEdge(result, obj1, obj2, 0);
+	} else { //check right and up
+		checkEdge(result, obj1, obj2, 1);
+		checkEdge(result, obj1, obj2, 0);
+	}
+
+	return result;
 }
