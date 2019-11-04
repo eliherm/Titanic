@@ -106,26 +106,16 @@ vector<object> physicsEngine::getState() {
 }
 
 double* physicsEngine::lineIntersect(double vec1x, double vec1y, int p1x, int p1y, double vec2x, double vec2y, int p2x, int p2y) {
-	double* result1 = new double[2];
-	double* result2 = new double[2];
+	double* result = new double[2];
 
-	double ddet = (vec1x*vec2y) - (vec2x*vec1y);
+	double ddet = (vec1y*vec2x) - (vec1x*vec2y);
 	if(ddet == 0) {
 		return nullptr;
 	} else {
-		double t1 = ((vec1x*(p2x - p1x)) + (vec2x*(p2y - p1y)))/ddet;
-		double t2 = -((vec1y*(p2x - p1x)) + (vec2y*(p2y - p1y)))/ddet;
-		result1[0] = (t1 * vec1x) + (double)p1x;
-		result1[1] = (t1 * vec1y) + (double)p1y;
-		result2[0] = (t2 * vec2x) + (double)p2x;
-		result2[1] = (t2 * vec2y) + (double)p2y;
-		if(result1[0] == result2[0] && result1[1] == result2[1]) {
-			//printf("Intersection detected from %d, %d, to %f, %f\n", p1x, p1y, result[0], result[1]);
-			return result1;
-		} else {
-			printf("failure\n");
-			return result1;
-		}
+		double t2 = ((vec1x * (p2y - p1y)) - (vec1y * (p2x - p1x)))/ddet;
+		result[0] = p2x + (t2 * vec2x);
+		result[1] = p2y + (t2 * vec2y);
+		return result;
 	}
 }
 
