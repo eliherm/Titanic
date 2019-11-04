@@ -5,6 +5,7 @@
 #pragma once
 
 #include <SDL.h>
+#include <string>
 #include <vector>
 #include "physics.h"
 using namespace std;
@@ -36,12 +37,32 @@ public:
 	void close();
 
 private:
+    // Main window
 	SDL_Window* window;
 	int WIDTH;
 	int HEIGHT;
-	SDL_Renderer* renderer;
+
+	SDL_Renderer* renderer; // Main renderer
+
+	// Sprites
 	sprite door;
 	sprite player;
 	sprite water;
 };
 
+// Handles SDL exceptions
+class SDLException: public exception {
+public:
+    explicit SDLException(string  msg);
+    string& what(); // Reports the error message
+private:
+    string errMsg;
+};
+
+class SDLImgException: public exception {
+public:
+    explicit SDLImgException(string  msg);
+    string& what(); // Reports the error message
+private:
+    string errMsg;
+};
