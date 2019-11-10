@@ -5,6 +5,10 @@
 
 int main(int argc, char *argv[]) {
 
+	//main menu, initialization of objects, etc
+
+	Controller c(60, 60);
+	c.run();
 }
 
 Controller::Controller(int fps, int tps) {
@@ -17,6 +21,7 @@ void Controller::run() {
 	int new_time = 0;
 	int f = 0;
 	int t = 0;
+
 
 	running = true;
 	while(running){//running is a public variable, so can be switched to false whenever needed
@@ -38,7 +43,20 @@ void Controller::run() {
 	}
 }
 
-void Controller::getVisibleObjects() {//will not be void, this is simply a template to be adjusted as soon as a final decision is made on variable formatting
+//untested!! it's relatively simple so its unlikely to have errors, but should be tested once view and physics are on-board
+vector<object> Controller::getVisibleObjects(const int width, const int height) {//takes width and height of the window, returns an array of all objects within that window, centered on the player. with the player as the first object. in the future object should include an id of some sort that can be translated to a sprite
+	vector<object> all = activeEngine.getState();
+	vector<object> visible;
+	int playerX = all.at(0).getXCoord() + all.at(0).getWidth()/2;
+	int playerY = all.at(0).getYCoord() + all.at(0).getHeight()/2;
+	for(int i = 0; i < all.size(); i++){
+		object temp = all.at(i);//checks each object against the borders of the screen. if we notice latency issues and fps > tps, it might be worth moving this into getState
+		if((temp.getXCoord() <= playerX + width/2 || temp.getXCoord() + temp.getWidth() >= playerX - width/2)
+				&& (temp.getYCoord() <= playerY + height/2 || temp.getYCoord() + temp.height >= playerY - height/2)){
+			visible.push_back(temp);
+		}
+	}
+	return visible;
 }
 
 void Controller::getKeyStates() {//will not be void, this is simply a template to be adjusted as soon as a final decision is made on variable formatting
