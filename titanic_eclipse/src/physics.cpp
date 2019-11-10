@@ -108,7 +108,7 @@ vector<object> physicsEngine::getState() {
 double* physicsEngine::lineIntersect(double vec1x, double vec1y, int p1x, int p1y, double vec2x, double vec2y, int p2x, int p2y) {
 	double* result = new double[2];
 
-	double ddet = (vec1y*vec2x) - (vec1x*vec2y);
+	double ddet =  (vec1x*vec2y) - (vec1y*vec2x);
 	if(ddet == 0) {
 		return nullptr;
 	} else {
@@ -214,3 +214,14 @@ double** physicsEngine::checkCollision(object obj1, object obj2) {
 
 	return result;
 }
+
+/*int main(int argc, char *argv[]) {//for quick testing
+	object o1(0, 0, 10, 10, 0.0);
+	o1.setSpeed(10000);
+	o1.setDir(6.2);
+	object o2(0, 20, 10, 10000, 0);
+	vector<object> v1 = {o2};
+
+	physicsEngine pe(o1, o1, o1, v1);
+	pe.checkCollision(o1, o2);
+}*/
