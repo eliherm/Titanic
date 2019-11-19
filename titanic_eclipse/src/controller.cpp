@@ -1,5 +1,7 @@
 #include <SDL2/SDL.h>
 #include <time.h>
+#include "view.h"
+#include "physics.h"
 
 #include "controller.h"
 
@@ -7,6 +9,8 @@ int main(int argc, char *argv[]) {
 
 	//main menu, initialization of objects, etc
 
+	gameDisplay screen(400, 600);
+	physicsEngine engine();
 	Controller c(60, 60);
 	c.run();
 }
@@ -66,9 +70,11 @@ void Controller::getGraphicData() {//not needed at the moment, but here for easy
 }
 
 void Controller::doPhysics() {//to be implemented in the physics branch
+
 }
 
 void Controller::doFrame() {//to be implemented in the view branch
+screen.update(getVisibleObjects(400, 600), False, False);
 }
 
 void Controller::checkKeys() {//to be implemented in the keys branch
