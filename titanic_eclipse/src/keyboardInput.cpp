@@ -1,51 +1,43 @@
 #include "keyboardInput.h"
 
-keyboardInput::keyboardInput(const SDL_Event& e) : event(e) {}
+keyboardInput::keyboardInput() {
+    for (int i = 0; i < 5; i++) {
+        keyStates.push_back(false);
+    }
+}
 
-// TODO: Process WASD keys
-vector<int> keyboardInput::getKeyboardInput() {
-    vector<int> keyCodes;
-
+vector<bool> keyboardInput::getKeyboardInput() {
     // Check if a key was pressed
-    if (event.type == SDL_KEYDOWN) {
-        switch (event.key.keysym.sym) {
-            case SDLK_UP:
-                keyCodes.push_back(SDLK_UP);
-                break;
-
-            case SDLK_DOWN:
-                keyCodes.push_back(SDLK_DOWN);
-                break;
-
-            case SDLK_LEFT:
-                keyCodes.push_back(SDLK_LEFT);
-                break;
-
-            case SDLK_RIGHT:
-                keyCodes.push_back(SDLK_RIGHT);
-                break;
-
-            case SDLK_w:
-            	keyCodes.push_back(SDLK_UP);
-            	break;
-
-            case SDLK_a:
-                 keyCodes.push_back(SDLK_LEFT);
-                 break;
-
-            case SDLK_s:
-                 keyCodes.push_back(SDLK_DOWN);
-                 break;
-
-            case SDLK_d:
-            	 keyCodes.push_back(SDLK_RIGHT);
-                 break;
-
-            case SDLK_SPACE:
-                 keyCodes.push_back(SDLK_SPACE);
-                 break;
-        }
+    const Uint8* currentKeyStates = SDL_GetKeyboardState(nullptr);
+    if (currentKeyStates[ SDL_SCANCODE_UP ] || currentKeyStates[ SDL_SCANCODE_W ]) {
+        keyStates[0] = true;
+    } else {
+        keyStates[0] = false;
     }
 
-    return keyCodes;
+    if (currentKeyStates[ SDL_SCANCODE_DOWN ] || currentKeyStates[ SDL_SCANCODE_S ]) {
+        keyStates[1] = true;
+    } else {
+        keyStates[1] = false;
+    }
+
+    if (currentKeyStates[ SDL_SCANCODE_LEFT ] || currentKeyStates[ SDL_SCANCODE_A ]) {
+        keyStates[2] = true;
+    } else {
+        keyStates[2] = false;
+    }
+
+    if (currentKeyStates[ SDL_SCANCODE_RIGHT ] || currentKeyStates[ SDL_SCANCODE_D ]) {
+        keyStates[3] = true;
+    } else {
+        keyStates[3] = false;
+    }
+
+    if (currentKeyStates[ SDL_SCANCODE_SPACE ]) {
+        keyStates[4] = true;
+    } else {
+        keyStates[4] = false;
+    }
+
+    return keyStates;
 }

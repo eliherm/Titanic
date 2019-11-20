@@ -8,9 +8,9 @@ using namespace std;
 
 class keyboardInput {
 public:
-    explicit keyboardInput(const SDL_Event& e);
-    vector<int> getKeyboardInput();
+    explicit keyboardInput();
+    vector<bool> getKeyboardInput();
 
 private:
-    SDL_Event event;
+    vector<bool> keyStates; // Index 0: Up, Index 1: down, index 2: left, index 3: right, index 4: space
 };
