@@ -35,6 +35,7 @@ private:
  
 class physicsEngine {
 public:
+    physicsEngine();
     physicsEngine(object player, object door, object water, vector<object> platforms);
     void updateObjects(const vector<int>& keypresses); //needs to take whatever the data format for key press input is
     vector<object> getState();

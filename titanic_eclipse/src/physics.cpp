@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include "physics.h"
 
+const int PLAYERGRAVITY = 5;
+
 using namespace std;
 
 object::object() {
@@ -77,6 +79,14 @@ double object::getGrav() {
 
 void object::setGrav(const double& newval) {
 	gravity = newval;
+}
+
+physicsEngine::physicsEngine(){
+	player = object(0, 0, 40, 80, PLAYERGRAVITY);
+	door = object(200, -200, 40, 80, 0);
+	water = object(0, 100, 960, 10, 0);
+	platforms = vector<object>();
+	platforms.push_back(object(0, 50, 200, 10, 0));
 }
 
 physicsEngine::physicsEngine(object player, object door, object water, vector<object> platforms) {
