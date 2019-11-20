@@ -23,7 +23,10 @@ public:
     void setDir(const double& newval);
     double getGrav();
     void setGrav(const double& newval);
+    bool isGrounded();
+    void setGrounded(const bool);//to be implemented via collision
 private:
+    bool grounded;
     int xcoord;
     int ycoord;
     int width;
@@ -37,7 +40,7 @@ class physicsEngine {
 public:
     physicsEngine();
     physicsEngine(object player, object door, object water, vector<object> platforms);
-    void updateObjects(const vector<int>& keypresses); //needs to take whatever the data format for key press input is
+    void updateObjects(const vector<bool>& keypresses); //needs to take whatever the data format for key press input is
     vector<object> getState();
 private:
     double* lineIntersect(double vec1x, double vec1y, int p1x, int p1y, double vec2x, double vec2y, int p2x, int p2y);

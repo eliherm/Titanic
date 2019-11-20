@@ -129,6 +129,41 @@ double* physicsEngine::lineIntersect(double vec1x, double vec1y, int p1x, int p1
 	}
 }
 
+void physicsEngine::updateObjects(const vector<bool> &keypresses) {
+	if(keypresses[0]){//up
+			if(player.isGrounded()){//simply checks if on the ground for basic jumps. may eventually include collision checks with wall etc for other functionality
+				player.setGrounded(false);
+				//jump, initial bump in upward velocity
+			}else{
+				//maintain jump. will allow better height if held, will probably not apply if the player is already moving down, or nearing the top of the jump, as this makes things feel floaty
+			}
+	}
+	if(keypresses[4]){//space, separate from up in case we implement ladders or such
+			if(player.isGrounded()){//simply checks if on the ground for basic jumps. may eventually include collision checks with wall etc for other functionality
+				player.setGrounded(false);
+				//jump, initial bump in upward velocity
+			}else{
+				//maintain jump. will allow better height if held, will probably not apply if the player is already moving down, or nearing the top of the jump, as this makes things feel floaty
+			}
+		}
+	if(keypresses[1]){//down
+		//fast-fall
+	}
+	if(keypresses[2] && !keypresses[3]){//left
+		//movement, adjust speed and direction
+	}else if(keypresses[3] && !keypresses[2]){//right
+		//movement, adjust speed and direction
+	}else{
+		//slow down horizontal movement when not inputting a single direction, allows for precise controls without feeling abrupt
+	}
+
+	//apply gravity to relevant objects (currently only player)
+
+	//check collisions between relevant objects (currently only player) and all objects.
+	//if no collisions, move object (before checking the next object), else compute collision behavior
+
+}
+
 void physicsEngine::checkEdge(double** res, object obj1, object obj2, int edge) {
 	double rad = obj1.getDir();
 	double speed = obj1.getSpeed();
