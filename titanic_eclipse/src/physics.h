@@ -17,10 +17,10 @@ public:
     int getHeight();
     void setWidth(const int& newval);
     void setHeight(const int& newval);
-    double getSpeed();
-    void setSpeed(const double& newval);
-    double getDir();
-    void setDir(const double& newval);
+    double getXSpeed();
+    void setXSpeed(const double& newval);
+    double getYSpeed();
+    void setYSpeed(const double& newval);
     double getGrav();
     void setGrav(const double& newval);
     bool containsPoint(const double& x, const double& y);
@@ -29,8 +29,10 @@ private:
     double ycoord;
     int width;
     int height;
-    double speed; //speed in pixels/s
-    double direction; //direction of movement in radii
+    double xspeed;
+    double yspeed;
+    //double speed; //speed in pixels/s
+    //double direction; //direction of movement in radii
     double gravity; //acceleration due to gravity in pixels/s^2
 };
 

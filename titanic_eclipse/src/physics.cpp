@@ -13,7 +13,9 @@ using namespace std;
 object::object() {
 	xcoord = 0;
 	ycoord = 0;
-	speed = 0;
+	//speed = 0;
+	xspeed = 0;
+	yspeed = 0;
 	width = 0;
 	height = 0;
 	gravity = 0;
@@ -22,7 +24,8 @@ object::object() {
 object::object(const double& xpos, const double& ypos, const int& width, const int& height, const double& gravity) {
 	xcoord = xpos;
 	ycoord = ypos;
-	speed = 0;
+	xspeed = 0;
+	yspeed = 0;
 	this->width = width;
 	this->height = height;
 	this->gravity = gravity;
@@ -57,20 +60,20 @@ void object::setHeight(const int& newval) {
 	height = newval;
 }
 
-double object::getSpeed() {
-	return speed;
+double object::getXSpeed() {
+	return this->xspeed;
 }
 
-void object::setSpeed(const double& newval) {
-	speed = newval;
+void object::setXSpeed(const double& newval) {
+	this->xspeed = newval;
 }
 
-double object::getDir() {
-	return direction;
+double object::getYSpeed() {
+	return this->yspeed;
 }
 
-void object::setDir(const double& newval) {
-	direction = newval;
+void object::setYSpeed(const double& newval) {
+	this->yspeed = newval;
 }
 
 double object::getGrav() {
@@ -162,13 +165,14 @@ bool physicsEngine::checkIntersection(object obj1, object obj2) {
 
 double* physicsEngine::getMaxVector(object obj1, object obj2) {
 	double* result = new double[2];
-	double xnorm = cos(obj1.getDir());
-	double ynorm = -sin(obj1.getDir()); //reflect y movement to match reflected SDL coordinate system
+	double speed = sqrt(pow(obj1.getXSpeed(), 2) + pow(obj1.getYSpeed(), 2));
+	double xnorm = obj1.getXSpeed()/speed;
+	double ynorm = -obj1.getYSpeed()/speed; //reflect y movement to match reflected SDL coordinate system
 
 	object obj1copy = obj1;
 
 	int segments = 0;
-	while(!checkIntersection(obj1copy, obj2) && !checkIntersection(obj2, obj1copy) && segments < obj1.getSpeed()) {
+	while(!checkIntersection(obj1copy, obj2) && !checkIntersection(obj2, obj1copy) && segments < speed) {
 		obj1copy.setCoord(obj1copy.getXCoord() + xnorm, obj1copy.getYCoord() + ynorm);
 		segments++;
 	}
