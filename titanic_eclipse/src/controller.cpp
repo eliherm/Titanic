@@ -5,11 +5,14 @@
 
 #include "controller.h"
 
+const int HEIGHT = 720;
+const int WIDTH = 960;
+
 int main(int argc, char *argv[]) {
 
 	//main menu, initialization of objects, etc
 
-	gameDisplay screen(400, 600);
+	gameDisplay screen(HEIGHT, WIDTH);
 	physicsEngine engine();
 	Controller c(60, 60);
 	c.run();
@@ -74,7 +77,7 @@ void Controller::doPhysics() {//to be implemented in the physics branch
 }
 
 void Controller::doFrame() {//to be implemented in the view branch
-screen.update(getVisibleObjects(400, 600), False, False);
+screen.update(getVisibleObjects(HEIGHT, WIDTH), False, False);
 }
 
 void Controller::checkKeys() {//to be implemented in the keys branch
