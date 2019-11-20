@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 #include <string>
 #include <vector>
+#include "keyboardInput.h"
 #include "physics.h"
 using namespace std;
 
@@ -10,6 +11,7 @@ int main(int argc, char *argv[]);
 
 physicsEngine activeEngine;//will not always be the only reference to an engine, simply to denote which engine is action in the event we have two at once
 gameDisplay activeScreen;
+keyboardInput keyboardIo;
 
 class Controller {
 public:

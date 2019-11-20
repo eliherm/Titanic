@@ -81,12 +81,20 @@ void object::setGrav(const double& newval) {
 	gravity = newval;
 }
 
+bool object::isGrounded() {
+    return grounded;
+}
+
+void object::setGrounded(const bool newval) {
+    grounded = newval;
+}
+
 physicsEngine::physicsEngine(){
-	player = object(0, 0, 40, 80, PLAYERGRAVITY);
-	door = object(200, -200, 40, 80, 0);
-	water = object(0, 100, 960, 10, 0);
+	player = object(200, 40, 40, 80, PLAYERGRAVITY);
+	door = object(400, 50, 40, 80, 0);
+	water = object(0, 60, 960, 10, 0);
 	platforms = vector<object>();
-	platforms.push_back(object(0, 50, 200, 10, 0));
+	platforms.push_back(object(0, 50, 300, 10, 0));
 }
 
 physicsEngine::physicsEngine(object player, object door, object water, vector<object> platforms) {
