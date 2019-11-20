@@ -8,14 +8,15 @@ using namespace std;
 
 int main(int argc, char *argv[]);
 
-physicsEngine activeEngine;//should never be the only reference to an engine, simply to denote which engine is action in the event we have two at once
+physicsEngine activeEngine;//will not always be the only reference to an engine, simply to denote which engine is action in the event we have two at once
+gameDisplay activeScreen;
 
 class Controller {
 public:
 	Controller(int fps, int tps);
 	void run();
 	vector<object> getVisibleObjects(const int, const int);
-	void getKeyStates();
+	vector<bool> getKeyStates();
 	void getGraphicData();
 	bool running;
 private:
@@ -24,5 +25,4 @@ private:
 
 	void doPhysics();
 	void doFrame();
-	void checkKeys();
 };

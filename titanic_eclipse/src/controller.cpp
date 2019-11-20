@@ -12,8 +12,8 @@ int main(int argc, char *argv[]) {
 
 	//main menu, initialization of objects, etc
 
-	gameDisplay screen(HEIGHT, WIDTH);
-	physicsEngine engine();
+	activeScreen = gameDisplay(HEIGHT, WIDTH);
+	activeEngine = physicsEngine();
 	Controller c(60, 60);
 	c.run();
 }
@@ -32,7 +32,7 @@ void Controller::run() {
 
 	running = true;
 	while(running){//running is a public variable, so can be switched to false whenever needed
-		checkKeys();//some keys (such as whatever we choose to be quit) may operate outside of regular frames or ticks, so it will be checked every loop
+		//checkKeys();//some keys (such as whatever we choose to be quit) may operate outside of regular frames or ticks, so it will be checked every loop
 		new_time = clock();
 		if(new_time > prev_time){//as far as I understand clock can wrap around, I'm not sure what the max value is yet. this code will miss a loop whenever it wraps, I might fix it at some point but the impact is minor
 			f += new_time - prev_time;
@@ -66,19 +66,21 @@ vector<object> Controller::getVisibleObjects(const int width, const int height) 
 	return visible;
 }
 
-void Controller::getKeyStates() {//will not be void, this is simply a template to be adjusted as soon as a final decision is made on variable formatting
+vector<bool> Controller::getKeyStates() {//will not be void, this is simply a template to be adjusted as soon as a final decision is made on variable formatting
+	vector<bool> keyStates = getKeyboardInput();
+	//check for escape keys that operate outside of normal gameplay, such as escape for pause menu (not yet implemented)
+	return keyStates;
 }
 
 void Controller::getGraphicData() {//not needed at the moment, but here for easy implementation if it's needed later
 }
 
 void Controller::doPhysics() {//to be implemented in the physics branch
+	activeEngine.updateObjects(getKeyStates());
+
 
 }
 
 void Controller::doFrame() {//to be implemented in the view branch
-screen.update(getVisibleObjects(HEIGHT, WIDTH), False, False);
-}
-
-void Controller::checkKeys() {//to be implemented in the keys branch
+	activeScreen.update(getVisibleObjects(HEIGHT, WIDTH), False, False);//will eventually include checks on victory or loss conditions
 }
