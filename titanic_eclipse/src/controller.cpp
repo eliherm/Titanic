@@ -46,7 +46,7 @@ void Controller::run() {
         }
 
 
-	    cout << f << " : " << t << endl;
+	    //cout << f << " : " << t << endl;
 		//checkKeys();//some keys (such as whatever we choose to be quit) may operate outside of regular frames or ticks, so it will be checked every loop
 		new_time = clock();
 		if(new_time > prev_time){//as far as I understand clock can wrap around, I'm not sure what the max value is yet. this code will miss a loop whenever it wraps, I might fix it at some point but the impact is minor
