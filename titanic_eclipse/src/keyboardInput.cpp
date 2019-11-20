@@ -1,7 +1,7 @@
 #include "keyboardInput.h"
 
 keyboardInput::keyboardInput() {
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 6; i++) {
         keyStates.push_back(false);
     }
 }
@@ -37,6 +37,12 @@ vector<bool> keyboardInput::getKeyboardInput() {
         keyStates[4] = true;
     } else {
         keyStates[4] = false;
+    }
+
+    if (currentKeyStates[ SDL_SCANCODE_ESCAPE ]) {
+        keyStates[5] = true;
+    } else {
+        keyStates[5] = false;
     }
 
     return keyStates;
