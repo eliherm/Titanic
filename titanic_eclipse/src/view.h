@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <string>
 #include <vector>
 #include "physics.h"
@@ -31,7 +31,7 @@ private:
 
 class gameDisplay {
 public:
-	gameDisplay(const int& hght, const int& wdth);
+	gameDisplay(const string& windowName, const int& wdth, const int& hght);
 	void levelInit(const int& doorX, const int& doorY);
 	void update(vector<object> objects, bool win, bool lose);
 	void close();

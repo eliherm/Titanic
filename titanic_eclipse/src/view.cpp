@@ -1,5 +1,5 @@
 #include <iostream>
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <SDL_image.h>
 #include <utility>
 #include <vector>
@@ -46,7 +46,7 @@ int sprite::getYPos() const {
 	return this->ycoord;
 }
 
-gameDisplay::gameDisplay(const int& height, const int& width) {
+gameDisplay::gameDisplay(const string& windowName, const int& height, const int& width) {
     WIDTH = width;
     HEIGHT = height;
     window = nullptr;
@@ -64,7 +64,7 @@ gameDisplay::gameDisplay(const int& height, const int& width) {
         }
 
         // Create a window
-        window = SDL_CreateWindow(window.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN); // NOLINT(hicpp-signed-bitwise)
+        window = SDL_CreateWindow(windowName.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN); // NOLINT(hicpp-signed-bitwise)
         if (window == nullptr) {
             throw SDLException("The main window could not be created!");
         }
