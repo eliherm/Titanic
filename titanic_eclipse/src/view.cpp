@@ -1,48 +1,12 @@
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+#include <SDL_image.h>
 #include <iostream>
 #include <utility>
 #include <vector>
 #include "view.h"
 using namespace std;
 
-sprite::sprite() {
-	this->xcoord = 0;
-	this->ycoord = 0;
-	this->width = 0;
-	this->height = 0;
-}
-
-sprite::sprite(const int &xpos, const int &ypos, const int &width, const int &height) {
-	this->xcoord = xpos;
-	this->ycoord = ypos;
-	this->width = width;
-	this->height = height;
-}
-
-void sprite::setDim(const int& width, const int& height) {
-	this->width = width;
-	this->height = height;
-}
-
-void sprite::setPos(const int &xpos, const int &ypos) {
-	xcoord = xpos;
-	ycoord = ypos;
-}
-
-// Sprite Accessors
-int sprite::getWidth() const { return this->width; }
-int sprite::getHeight() const { return this->height; }
-int sprite::getXPos() const { return this->xcoord; }
-int sprite::getYPos() const { return this->ycoord; }
-
-gameDisplay::gameDisplay() {
-    WIDTH = 0;
-    HEIGHT = 0;
-    window = nullptr;
-    renderer = nullptr;
-}
-
+gameDisplay::gameDisplay(): WIDTH(0), HEIGHT(0), window(nullptr), renderer(nullptr) {}
 gameDisplay::gameDisplay(const string& windowName, const int& height, const int& width) {
     WIDTH = width;
     HEIGHT = height;
@@ -91,12 +55,31 @@ gameDisplay::gameDisplay(const string& windowName, const int& height, const int&
 
 void gameDisplay::levelInit(const int& doorX, const int& doorY) {
 	// Setting player, water, and door dimensions
-	player.setDim(40, 80);
-	water.setDim(WIDTH, HEIGHT);
-	door.setDim(40, 80);
+	player.setDim(128, 240);
+    water.setDim(WIDTH, HEIGHT);
+    door.setDim(40, 80);
 
 	// Setting door position
 	door.setPos(doorX, doorY);
+
+    // Initialize player textures
+    player.spriteSheet = new TextureWrap(renderer, "../titanic_eclipse/assets/player.png");
+    SDL_Rect playerFrontClip = {32, 24, 128, 240};  // Front
+    SDL_Rect playerLeftClip = {552, 288, 104, 240}; // Left
+    SDL_Rect playerRightClip = {552, 24, 104, 240}; // Right
+    SDL_Rect playerBackClip = {32, 288, 128, 240};  // Back
+    player.spriteClips.push_back(playerFrontClip);
+    player.spriteClips.push_back(playerLeftClip);
+    player.spriteClips.push_back(playerRightClip);
+    player.spriteClips.push_back(playerBackClip);
+
+    // Initialize water textures
+    water.spriteSheet = new TextureWrap(renderer, "../titanic_eclipse/assets/water.png");
+
+    // Initialize door textures
+    door.spriteSheet = new TextureWrap(renderer, "../titanic_eclipse/assets/door.png");
+    SDL_Rect doorClip = {193, 384, 46, 95};
+    door.spriteClips.push_back(doorClip);
 }
 
 void gameDisplay::update(vector<object> objects, bool win, bool lose) {
@@ -104,19 +87,15 @@ void gameDisplay::update(vector<object> objects, bool win, bool lose) {
 	player.setPos(objects.at(0).getXCoord(), objects.at(0).getYCoord());
 	water.setPos(0, objects.at(2).getYCoord());
 
-	// Draw background
-	SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-	SDL_RenderClear(renderer);
+    // Clear screen
+    SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+    SDL_RenderClear(renderer);
 
-	// Draw water
-	SDL_Rect waterRect = {0, water.getYPos(), water.getWidth(), water.getHeight()};
-	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0xff, 0xff);
-	SDL_RenderFillRect(renderer, &waterRect);
+	// Render water
+    water.spriteSheet->render(0, water.getYPos(), nullptr);
 
-    // Draw door
-    SDL_Rect doorRect = {door.getXPos(), door.getYPos(), door.getWidth(), door.getHeight()};
-    SDL_SetRenderDrawColor(renderer, 0xd2, 0xb4, 0x8c, 0xff);
-    SDL_RenderFillRect(renderer, &doorRect);
+    // Render door
+    door.spriteSheet->render(door.getXPos(), door.getYPos(), &(door.spriteClips.at(0)));
 
 	// Draw platforms
 	SDL_SetRenderDrawColor(renderer, 0xc2, 0xc5, 0xcc, 0xff);
@@ -125,16 +104,22 @@ void gameDisplay::update(vector<object> objects, bool win, bool lose) {
 		SDL_RenderFillRect(renderer, &platform);
 	}
 
-	// Draw player
-	SDL_Rect playerRect = {player.getXPos(), player.getYPos(), player.getWidth(), player.getHeight()};
-	SDL_SetRenderDrawColor(renderer, 0xff, 0x00, 0x00, 0xff);
-	SDL_RenderFillRect(renderer, &playerRect);
+	// Render player
+    player.spriteSheet->render(player.getXPos(), player.getYPos(), &(player.spriteClips.at(0)));
 
 	// Dumping buffer to screen
 	SDL_RenderPresent(renderer);
 }
 
 void gameDisplay::close() {
+    // Free textures
+    delete player.spriteSheet;
+    delete water.spriteSheet;
+    delete door.spriteSheet;
+    player.spriteSheet = nullptr;
+    water.spriteSheet = nullptr;
+    door.spriteSheet = nullptr;
+
 	// Destroying everything!
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);

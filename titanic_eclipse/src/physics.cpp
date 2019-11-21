@@ -29,11 +29,11 @@ object::object(const int& xpos, const int& ypos, const int& width, const int& he
 }
 
 int object::getXCoord() {
-	return xcoord;
+    return xcoord;
 }
 
 int object::getYCoord() {
-	return ycoord;
+    return ycoord;
 }
 
 void object::setCoord(const int& newx, const int& newy) {
@@ -89,12 +89,15 @@ void object::setGrounded(const bool newval) {
     grounded = newval;
 }
 
-physicsEngine::physicsEngine(){
-	player = object(200, 40, 40, 80, PLAYERGRAVITY);
+physicsEngine::physicsEngine() {
+	player = object(416, 300, 128, 240, PLAYERGRAVITY);
 	door = object(400, 50, 40, 80, 0);
-	water = object(0, 60, 960, 10, 0);
+	water = object(0, 600, 960, 10, 0);
 	platforms = vector<object>();
-	platforms.push_back(object(0, 50, 300, 10, 0));
+	platforms.emplace_back(object(330, 540, 300, 10, 0));
+    platforms.emplace_back(object(770, 300, 200, 10, 0));
+    platforms.emplace_back(object(0, 150, 200, 10, 0));
+    platforms.emplace_back(object(400, 50, 300, 10, 0));
 }
 
 physicsEngine::physicsEngine(object player, object door, object water, vector<object> platforms) {
@@ -105,7 +108,6 @@ physicsEngine::physicsEngine(object player, object door, object water, vector<ob
 }
 
 vector<object> physicsEngine::getState() {
-
     vector<object> tempVec {};
 
 	// add player -> door -> water
@@ -118,9 +120,7 @@ vector<object> physicsEngine::getState() {
    		tempVec.push_back (platforms[i]);
 	}	
 
-
     return tempVec;
-
 }
 
 double* physicsEngine::lineIntersect(double vec1x, double vec1y, int p1x, int p1y, double vec2x, double vec2y, int p2x, int p2y) {
@@ -169,7 +169,6 @@ void physicsEngine::updateObjects(const vector<bool> &keypresses) {
 
 	//check collisions between relevant objects (currently only player) and all objects.
 	//if no collisions, move object (before checking the next object), else compute collision behavior
-
 }
 
 void physicsEngine::checkEdge(double** res, object obj1, object obj2, int edge) {
