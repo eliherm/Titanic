@@ -1,6 +1,6 @@
-#include <iostream>
 #include <SDL2/SDL.h>
-#include <SDL_image.h>
+#include <SDL2/SDL_image.h>
+#include <iostream>
 #include <utility>
 #include <vector>
 #include "view.h"
@@ -30,20 +30,17 @@ void sprite::setPos(const int &xpos, const int &ypos) {
 	ycoord = ypos;
 }
 
-int sprite::getWidth() const {
-	return this->width;
-}
+// Sprite Accessors
+int sprite::getWidth() const { return this->width; }
+int sprite::getHeight() const { return this->height; }
+int sprite::getXPos() const { return this->xcoord; }
+int sprite::getYPos() const { return this->ycoord; }
 
-int sprite::getHeight() const {
-	return this->height;
-}
-
-int sprite::getXPos() const {
-	return this->xcoord;
-}
-
-int sprite::getYPos() const {
-	return this->ycoord;
+gameDisplay::gameDisplay() {
+    WIDTH = 0;
+    HEIGHT = 0;
+    window = nullptr;
+    renderer = nullptr;
 }
 
 gameDisplay::gameDisplay(const string& windowName, const int& height, const int& width) {
@@ -111,15 +108,15 @@ void gameDisplay::update(vector<object> objects, bool win, bool lose) {
 	SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
 	SDL_RenderClear(renderer);
 
-	// Draw door
-	SDL_Rect doorRect = {door.getXPos(), door.getYPos(), door.getWidth(), door.getHeight()};
-	SDL_SetRenderDrawColor(renderer, 0xd2, 0xb4, 0x8c, 0xff);
-	SDL_RenderFillRect(renderer, &doorRect);
-
 	// Draw water
 	SDL_Rect waterRect = {0, water.getYPos(), water.getWidth(), water.getHeight()};
 	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0xff, 0xff);
 	SDL_RenderFillRect(renderer, &waterRect);
+
+    // Draw door
+    SDL_Rect doorRect = {door.getXPos(), door.getYPos(), door.getWidth(), door.getHeight()};
+    SDL_SetRenderDrawColor(renderer, 0xd2, 0xb4, 0x8c, 0xff);
+    SDL_RenderFillRect(renderer, &doorRect);
 
 	// Draw platforms
 	SDL_SetRenderDrawColor(renderer, 0xc2, 0xc5, 0xcc, 0xff);
