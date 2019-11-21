@@ -80,6 +80,13 @@ void gameDisplay::levelInit(const int& doorX, const int& doorY) {
     door.spriteSheet = new TextureWrap(renderer, "../titanic_eclipse/assets/door.png");
     SDL_Rect doorClip = {193, 384, 46, 95};
     door.spriteClips.push_back(doorClip);
+
+    // Initialize platforms
+    platforms.spriteSheet = new TextureWrap(renderer, "../titanic_eclipse/assets/industrial.v1.png");
+    SDL_Rect platform1 = {192, 0, 64, 19};
+    SDL_Rect platform2 = {0, 0, 192, 32};
+    platforms.spriteClips.push_back(platform1);
+    platforms.spriteClips.push_back(platform2);
 }
 
 void gameDisplay::update(vector<object> objects, bool win, bool lose) {
@@ -91,21 +98,20 @@ void gameDisplay::update(vector<object> objects, bool win, bool lose) {
     SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
     SDL_RenderClear(renderer);
 
-	// Render water
-    water.spriteSheet->render(0, water.getYPos(), nullptr);
-
     // Render door
     door.spriteSheet->render(door.getXPos(), door.getYPos(), &(door.spriteClips.at(0)));
 
 	// Draw platforms
-	SDL_SetRenderDrawColor(renderer, 0xc2, 0xc5, 0xcc, 0xff);
-	for (int i = 3; i < objects.size(); i++) {
-		SDL_Rect platform = {objects.at(i).getXCoord(), objects.at(i).getYCoord(), objects.at(i).getWidth(), objects.at(i).getHeight()};
-		SDL_RenderFillRect(renderer, &platform);
-	}
+    platforms.spriteSheet->render(objects.at(3).getXCoord(), objects.at(3).getYCoord(), &(platforms.spriteClips.at(0)));
+    platforms.spriteSheet->render(objects.at(4).getXCoord(), objects.at(4).getYCoord(), &(platforms.spriteClips.at(0)));
+    platforms.spriteSheet->render(objects.at(5).getXCoord(), objects.at(5).getYCoord(), &(platforms.spriteClips.at(0)));
+    platforms.spriteSheet->render(objects.at(6).getXCoord(), objects.at(5).getYCoord(), &(platforms.spriteClips.at(1)));
 
 	// Render player
-    player.spriteSheet->render(player.getXPos(), player.getYPos(), &(player.spriteClips.at(0)));
+    //player.spriteSheet->render(player.getXPos(), player.getYPos(), &(player.spriteClips.at(0)));
+
+    // Render water
+    //water.spriteSheet->render(0, water.getYPos(), nullptr);
 
 	// Dumping buffer to screen
 	SDL_RenderPresent(renderer);
@@ -116,9 +122,11 @@ void gameDisplay::close() {
     delete player.spriteSheet;
     delete water.spriteSheet;
     delete door.spriteSheet;
+    delete platforms.spriteSheet;
     player.spriteSheet = nullptr;
     water.spriteSheet = nullptr;
     door.spriteSheet = nullptr;
+    platforms.spriteSheet = nullptr;
 
 	// Destroying everything!
 	SDL_DestroyRenderer(renderer);

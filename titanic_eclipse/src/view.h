@@ -30,6 +30,7 @@ private:
     sprite player;
     sprite water;
 	sprite door;
+	sprite platforms;
 };
 
 // Handles SDL exceptions
