@@ -1,9 +1,9 @@
 /**
  * Source file for physics engine
  */
-#include <vector>
 #include <cmath>
 #include <stdio.h>
+#include <vector>
 #include "physics.h"
 
 const int PLAYERGRAVITY = 5;

@@ -1,4 +1,3 @@
-
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <iostream>
@@ -31,28 +30,17 @@ void sprite::setPos(const int &xpos, const int &ypos) {
 	ycoord = ypos;
 }
 
-int sprite::getWidth() const {
-	return this->width;
-}
-
-int sprite::getHeight() const {
-	return this->height;
-}
-
-int sprite::getXPos() const {
-	return this->xcoord;
-}
-
-int sprite::getYPos() const {
-	return this->ycoord;
-}
+// Sprite Accessors
+int sprite::getWidth() const { return this->width; }
+int sprite::getHeight() const { return this->height; }
+int sprite::getXPos() const { return this->xcoord; }
+int sprite::getYPos() const { return this->ycoord; }
 
 gameDisplay::gameDisplay() {
     WIDTH = 0;
     HEIGHT = 0;
     window = nullptr;
     renderer = nullptr;
-
 }
 
 gameDisplay::gameDisplay(const string& windowName, const int& height, const int& width) {

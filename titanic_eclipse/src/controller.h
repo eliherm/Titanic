@@ -9,10 +9,6 @@ using namespace std;
 
 int main(int argc, char *argv[]);
 
-physicsEngine activeEngine;//will not always be the only reference to an engine, simply to denote which engine is action in the event we have two at once
-gameDisplay activeScreen;
-keyboardInput keyboardIo;
-
 class Controller {
 public:
 	Controller(int fps, int tps);
@@ -21,6 +17,10 @@ public:
 	vector<bool> getKeyStates();
 	void getGraphicData();
 	bool running;
+
+    physicsEngine activeEngine; // will not always be the only reference to an engine, simply to denote which engine is action in the event we have two at once
+    gameDisplay activeScreen;
+    keyboardInput keyboardIo;
 private:
 	int f_time;
 	int t_time;

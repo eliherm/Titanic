@@ -1,6 +1,6 @@
+#include <iostream>
 #include <SDL2/SDL.h>
 #include <time.h>
-#include <iostream>
 #include "view.h"
 #include "physics.h"
 #include "keyboardInput.h"
@@ -10,19 +10,19 @@ const int HEIGHT = 720;
 const int WIDTH = 960;
 
 int main(int argc, char *argv[]) {
-
 	//main menu, initialization of objects, etc
-
-	activeScreen = gameDisplay("titanic", HEIGHT, WIDTH);
-	activeScreen.levelInit(400, 50);
-	keyboardIo = keyboardInput();
 	Controller c(60, 60);
 	c.run();
+	c.activeScreen.close();
 }
 
 Controller::Controller(int fps, int tps) {
 	this->f_time = CLOCKS_PER_SEC / fps;
 	this->t_time = CLOCKS_PER_SEC / tps;
+
+    activeScreen = gameDisplay("titanic", HEIGHT, WIDTH);
+    activeScreen.levelInit(400, 50);
+    keyboardIo = keyboardInput();
 }
 
 void Controller::run() {
@@ -31,20 +31,16 @@ void Controller::run() {
 	int f = 0;
 	int t = 0;
 
-
 	running = true;
-	while(running){//running is a public variable, so can be switched to false whenever needed
+	while (running) {//running is a public variable, so can be switched to false whenever needed
 
 	    SDL_Event e;
-        while( SDL_PollEvent( &e ) != 0 )
-        {
-            //User requests quit
-            if( e.type == SDL_QUIT )
-            {
+        while (SDL_PollEvent( &e ) != 0) {
+            // User requests quit
+            if( e.type == SDL_QUIT ) {
                 running =  false;
             }
         }
-
 
 	    //cout << f << " : " << t << endl;
 		//checkKeys();//some keys (such as whatever we choose to be quit) may operate outside of regular frames or ticks, so it will be checked every loop
@@ -92,8 +88,6 @@ void Controller::getGraphicData() {//not needed at the moment, but here for easy
 
 void Controller::doPhysics() {//to be implemented in the physics branch
 	activeEngine.updateObjects(getKeyStates());
-
-
 }
 
 void Controller::doFrame() {//to be implemented in the view branch

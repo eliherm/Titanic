@@ -31,8 +31,8 @@ private:
 
 class gameDisplay {
 public:
-    gameDisplay();//unusable, only for initial null objects
-	gameDisplay(const string& windowName, const int& wdth, const int& hght);
+    gameDisplay();  // unusable, only for initial null objects
+	gameDisplay(const string& windowName, const int& hght, const int& wdth);
 	void levelInit(const int& doorX, const int& doorY);
 	void update(vector<object> objects, bool win, bool lose);
 	void close();
