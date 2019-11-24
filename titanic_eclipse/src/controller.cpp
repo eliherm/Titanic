@@ -14,6 +14,7 @@ int main(int argc, char *argv[]) {
 	Controller c(60, 60);
 	c.run();
 	c.activeScreen.close();
+	return 0;
 }
 
 Controller::Controller(int fps, int tps) {
@@ -21,7 +22,7 @@ Controller::Controller(int fps, int tps) {
 	this->t_time = CLOCKS_PER_SEC / tps;
 
     activeScreen = gameDisplay("titanic", HEIGHT, WIDTH);
-    activeScreen.levelInit(400, 50);
+    activeScreen.levelInit(800, 50);
     keyboardIo = keyboardInput();
 }
 
@@ -35,7 +36,7 @@ void Controller::run() {
 	while (running) {//running is a public variable, so can be switched to false whenever needed
 
 	    SDL_Event e;
-        while (SDL_PollEvent( &e ) != 0) {
+        while (SDL_PollEvent(&e) != 0) {
             // User requests quit
             if( e.type == SDL_QUIT ) {
                 running =  false;
@@ -91,5 +92,5 @@ void Controller::doPhysics() {//to be implemented in the physics branch
 }
 
 void Controller::doFrame() {//to be implemented in the view branch
-	activeScreen.update(getVisibleObjects(HEIGHT, WIDTH), false, false);//will eventually include checks on victory or loss conditions
+	activeScreen.update(getVisibleObjects(HEIGHT, WIDTH), getKeyStates(), false, false);//will eventually include checks on victory or loss conditions
 }
