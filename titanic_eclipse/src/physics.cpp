@@ -249,12 +249,17 @@ double* physicsEngine::getMaxVector(object obj1, object obj2) {
 	}
 
 	//correct for bullet paper problem
-	if(segments > 0) {
-		obj1copy.setCoord(obj1copy.getXCoord() - xnorm, obj1copy.getYCoord() - ynorm);
+	//if(segments > 0) { segments should always be greater than 0, otherwise obj1 is already inside obj2
+
+	obj1copy.setCoord(obj1copy.getXCoord() - xnorm, obj1copy.getYCoord());//check which face was hit, and only reduce that part of the vector
+	if(checkIntersection(obj1copy, obj2)){
+		result[0] = obj1.getXSpeed();
+		result[1] = obj1copy.getYCoord() - obj1.getYCoord() - ynorm;
+	}else{
+		result[0] = obj1copy.getXCoord() - obj1.getXCoord();
+		result[1] = obj1.getYSpeed();
 	}
 
-	result[0] = (obj1copy.getXCoord() - obj1.getXCoord());
-	result[1] = (obj1copy.getYCoord() - obj1.getYCoord());
 	return result;
 }
 
