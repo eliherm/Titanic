@@ -4,9 +4,10 @@
 #include <cmath>
 #include <stdio.h>
 #include <vector>
+#include <iostream>
 #include "physics.h"
 
-const int PLAYERGRAVITY = 5;
+const double PLAYERGRAVITY = 0.5, JUMPSPEED = 10, MAXRUNSPEED = 2, RUNACCELERATION = 0.2;
 
 using namespace std;
 
@@ -44,6 +45,11 @@ void object::setCoord(const double& newx, const double& newy) {
 	ycoord = newy;
 }
 
+void object::addCoord(const double& newx, const double& newy) {
+	xcoord += newx;
+	ycoord += newy;
+}
+
 int object::getWidth() {
 	return width;
 }
@@ -68,12 +74,20 @@ void object::setXSpeed(const double& newval) {
 	this->xspeed = newval;
 }
 
+void object::addXSpeed(const double& newval) {
+	this->xspeed += newval;
+}
+
 double object::getYSpeed() {
 	return this->yspeed;
 }
 
 void object::setYSpeed(const double& newval) {
 	this->yspeed = newval;
+}
+
+void object::addYSpeed(const double& newval) {
+	this->yspeed += newval;
 }
 
 double object::getGrav() {
@@ -85,11 +99,11 @@ void object::setGrav(const double& newval) {
 }
 
 bool object::isGrounded() {
-    return grounded;
+	return grounded;
 }
 
 void object::setGrounded(const bool newval) {
-    grounded = newval;
+	grounded = newval;
 }
 
 physicsEngine::physicsEngine(){
@@ -97,7 +111,7 @@ physicsEngine::physicsEngine(){
 	door = object(400, 50, 40, 80, 0);
 	water = object(0, 60, 960, 10, 0);
 	platforms = vector<object>();
-	platforms.push_back(object(0, 50, 300, 10, 0));
+	platforms.push_back(object(0, 200, 300, 10, 0));
 }
 
 physicsEngine::physicsEngine(object player, object door, object water, vector<object> platforms) {
@@ -108,38 +122,77 @@ physicsEngine::physicsEngine(object player, object door, object water, vector<ob
 }
 
 void physicsEngine::updateObjects(const vector<bool> &keypresses) {
-/*	if(keypresses[0]){//up
-			if(player.isGrounded()){//simply checks if on the ground for basic jumps. may eventually include collision checks with wall etc for other functionality
-				player.setGrounded(false);
-				//jump, initial bump in upward velocity
-			}else{
-				//maintain jump. will allow better height if held, will probably not apply if the player is already moving down, or nearing the top of the jump, as this makes things feel floaty
+	if(keypresses[0]){//up
+		if(player.isGrounded()){//simply checks if on the ground for basic jumps. may eventually include collision checks with wall etc for other functionality
+			player.setGrounded(false);
+			player.setYSpeed(-JUMPSPEED);//jump, initial bump in upward velocity
+		}else{
+			//maintain jump. will allow better height if held, will probably not apply if the player is already moving down, or nearing the top of the jump, as this makes things feel floaty
+			if(player.getYSpeed() <= -(JUMPSPEED/10)){
+				player.addYSpeed(-PLAYERGRAVITY/2);
 			}
+
+		}
+	}else{
+		//temporary to allow easy testing without designing levels for it
+		//player.setGrounded(true);
 	}
 	if(keypresses[4]){//space, separate from up in case we implement ladders or such
-			if(player.isGrounded()){//simply checks if on the ground for basic jumps. may eventually include collision checks with wall etc for other functionality
-				player.setGrounded(false);
-				//jump, initial bump in upward velocity
-			}else{
-				//maintain jump. will allow better height if held, will probably not apply if the player is already moving down, or nearing the top of the jump, as this makes things feel floaty
+		if(player.isGrounded()){//simply checks if on the ground for basic jumps. may eventually include collision checks with wall etc for other functionality
+			player.setGrounded(false);
+			player.setYSpeed(-JUMPSPEED);//jump, initial bump in upward velocity
+		}else{
+			//maintain jump. will allow better height if held, will probably not apply if the player is already moving down, or nearing the top of the jump, as this makes things feel floaty
+			if(player.getYSpeed() <= -(JUMPSPEED/10)){
+				player.addYSpeed(-PLAYERGRAVITY/2);
 			}
 		}
+	}else{
+		//temporary to allow easy testing without designing levels for it
+		player.setGrounded(true);
+	}
 	if(keypresses[1]){//down
-		//fast-fall
+		player.addYSpeed(PLAYERGRAVITY);//fastfall
 	}
 	if(keypresses[2] && !keypresses[3]){//left
-		//movement, adjust speed and direction
+		if(player.getXSpeed() > RUNACCELERATION - MAXRUNSPEED){
+			player.addXSpeed(-RUNACCELERATION);
+		}else{
+			player.setXSpeed(-MAXRUNSPEED);
+		}
 	}else if(keypresses[3] && !keypresses[2]){//right
-		//movement, adjust speed and direction
+		if(player.getXSpeed() < MAXRUNSPEED - RUNACCELERATION){
+			player.addXSpeed(RUNACCELERATION);
+		}else{
+			player.setXSpeed(MAXRUNSPEED);
+		}
 	}else{
-		//slow down horizontal movement when not inputting a single direction, allows for precise controls without feeling abrupt
+		if(player.getXSpeed() > RUNACCELERATION){
+			player.addXSpeed(-RUNACCELERATION);
+		}else if(player.getXSpeed() < -RUNACCELERATION){
+			player.addXSpeed(RUNACCELERATION);
+		}else player.setXSpeed(0);
 	}
 
 	//apply gravity to relevant objects (currently only player)
+	player.addYSpeed(PLAYERGRAVITY);
 
-	//check collisions between relevant objects (currently only player) and all objects.
+	//check collisions between relevant objects (currently only player) and all objects. if others are implemented, will be placed in a loop iterating through the list
+	double* movement = new double[2];
+	movement[0] = player.getXSpeed();
+	movement[1] = player.getYSpeed();
+	for(int i = 0; i < platforms.size(); i++){
+		double* temp = getMaxVector(player, platforms.at(i));
+		if(temp[0] < movement[0] || temp[1] < movement[1]){//temp follows the player's vector, so if one's smaller so is the other. but one could be 0 so we need to check both
+			delete[] movement;//we currently have tons of memory leaks, we have to start managing memory properly
+			movement = temp;
+		}else delete[] temp;
+	}
 	//if no collisions, move object (before checking the next object), else compute collision behavior
-*/
+	player.addCoord(movement[0], movement[1]);
+	delete[] movement;
+
+	//check door and water for win/loss
 }
 
 bool physicsEngine::checkIntersection(object obj1, object obj2) {
@@ -167,7 +220,6 @@ bool physicsEngine::checkIntersection(object obj1, object obj2) {
 			return true;
 		}
 	}
-
 	return false;
 }
 
@@ -192,13 +244,12 @@ double* physicsEngine::getMaxVector(object obj1, object obj2) {
 
 	result[0] = floor(obj1copy.getXCoord() - obj1.getXCoord());
 	result[1] = -floor(obj1copy.getYCoord() - obj1.getYCoord()); //reflecting y movement back
-
 	return result;
 }
 
 vector<object> physicsEngine::getState() {
 
-    vector<object> tempVec {};
+	vector<object> tempVec {};
 
 	// add player -> door -> water
 	tempVec.push_back (player);
@@ -207,10 +258,10 @@ vector<object> physicsEngine::getState() {
 
 	// fill tempVec with lots of data - iterate through platform vector and add to temp vec
 	for(int i=0; i < platforms.size(); i++){
-   		tempVec.push_back (platforms[i]);
+		tempVec.push_back (platforms[i]);
 	}
 
 
-    return tempVec;
+	return tempVec;
 
 }

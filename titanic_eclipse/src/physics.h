@@ -13,18 +13,24 @@ public:
     double getXCoord();
     double getYCoord();
     void setCoord(const double& newx, const double& newy);
+    void addCoord(const double& newx, const double& newy);
     int getWidth();
     int getHeight();
     void setWidth(const int& newval);
     void setHeight(const int& newval);
     double getXSpeed();
     void setXSpeed(const double& newval);
+    void addXSpeed(const double& newval);
     double getYSpeed();
     void setYSpeed(const double& newval);
+    void addYSpeed(const double& newval);
     double getGrav();
     void setGrav(const double& newval);
     bool containsPoint(const double& x, const double& y);
+    bool isGrounded();
+    void setGrounded(const bool newval);
 private:
+    bool grounded = true;
     double xcoord;
     double ycoord;
     int width;
