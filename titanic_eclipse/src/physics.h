@@ -10,6 +10,7 @@ class object {
 public:
     object();
     object(const double& xpos, const double& ypos, const int& width, const int& height, const double& gravity);
+    object(const object&);
     double getXCoord();
     double getYCoord();
     void setCoord(const double& newx, const double& newy);

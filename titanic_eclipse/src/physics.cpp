@@ -22,6 +22,17 @@ object::object() {
 	gravity = 0;
 }
 
+object::object(const object& newval) {
+	xcoord = newval.xcoord;
+	ycoord = newval.ycoord;
+	//speed = 0;
+	xspeed = newval.xspeed;
+	yspeed = newval.yspeed;
+	width = newval.width;
+	height = newval.height;
+	gravity = newval.gravity;
+}
+
 object::object(const double& xpos, const double& ypos, const int& width, const int& height, const double& gravity) {
 	xcoord = xpos;
 	ycoord = ypos;
@@ -183,20 +194,21 @@ void physicsEngine::updateObjects(const vector<bool> &keypresses) {
 	movement[1] = player.getYSpeed();
 	for(int i = 0; i < platforms.size(); i++){
 		double* temp = getMaxVector(player, platforms.at(i));
-		if(temp[0] < movement[0] || temp[1] < movement[1]){//temp follows the player's vector, so if one's smaller so is the other. but one could be 0 so we need to check both
+		if(abs(temp[0]) < abs(movement[0]) || abs(temp[1]) < abs(movement[1])){//temp follows the player's vector, so if one's smaller so is the other. but one could be 0 so we need to check both
 			delete[] movement;//we currently have tons of memory leaks, we have to start managing memory properly
 			movement = temp;
 		}else delete[] temp;
 	}
 	//if no collisions, move object (before checking the next object), else compute collision behavior
 	player.addCoord(movement[0], movement[1]);
+	printf("%4f : %4f \n", player.getYCoord(), movement[1]);
 	delete[] movement;
 
 	//check door and water for win/loss
 }
 
 bool physicsEngine::checkIntersection(object obj1, object obj2) {
-	//
+
 	for(int i = 0; i < obj1.getWidth(); ++i) {
 		int x = obj1.getXCoord() + i;
 		int topy = obj1.getYCoord();
@@ -227,10 +239,9 @@ double* physicsEngine::getMaxVector(object obj1, object obj2) {
 	double* result = new double[2];
 	double speed = sqrt(pow(obj1.getXSpeed(), 2) + pow(obj1.getYSpeed(), 2));
 	double xnorm = obj1.getXSpeed()/speed;
-	double ynorm = -obj1.getYSpeed()/speed; //reflect y movement to match reflected SDL coordinate system
+	double ynorm = obj1.getYSpeed()/speed;
 
-	object obj1copy = obj1;
-
+	object obj1copy(obj1);
 	int segments = 0;
 	while(!checkIntersection(obj1copy, obj2) && !checkIntersection(obj2, obj1copy) && segments < speed) {
 		obj1copy.setCoord(obj1copy.getXCoord() + xnorm, obj1copy.getYCoord() + ynorm);
@@ -242,8 +253,8 @@ double* physicsEngine::getMaxVector(object obj1, object obj2) {
 		obj1copy.setCoord(obj1copy.getXCoord() - xnorm, obj1copy.getYCoord() - ynorm);
 	}
 
-	result[0] = floor(obj1copy.getXCoord() - obj1.getXCoord());
-	result[1] = -floor(obj1copy.getYCoord() - obj1.getYCoord()); //reflecting y movement back
+	result[0] = (obj1copy.getXCoord() - obj1.getXCoord());
+	result[1] = (obj1copy.getYCoord() - obj1.getYCoord());
 	return result;
 }
 
