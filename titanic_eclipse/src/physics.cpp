@@ -144,9 +144,6 @@ void physicsEngine::updateObjects(const vector<bool> &keypresses) {
 			}
 
 		}
-	}else{
-		//temporary to allow easy testing without designing levels for it
-		//player.setGrounded(true);
 	}
 	if(keypresses[4]){//space, separate from up in case we implement ladders or such
 		if(player.isGrounded()){//simply checks if on the ground for basic jumps. may eventually include collision checks with wall etc for other functionality
@@ -158,9 +155,6 @@ void physicsEngine::updateObjects(const vector<bool> &keypresses) {
 				player.addYSpeed(-PLAYERGRAVITY/2);
 			}
 		}
-	}else{
-		//temporary to allow easy testing without designing levels for it
-		player.setGrounded(true);
 	}
 	if(keypresses[1]){//down
 		player.addYSpeed(PLAYERGRAVITY);//fastfall
@@ -194,14 +188,18 @@ void physicsEngine::updateObjects(const vector<bool> &keypresses) {
 	movement[1] = player.getYSpeed();
 	for(int i = 0; i < platforms.size(); i++){
 		double* temp = getMaxVector(player, platforms.at(i));
-		if(abs(temp[0]) < abs(movement[0]) || abs(temp[1]) < abs(movement[1])){//temp follows the player's vector, so if one's smaller so is the other. but one could be 0 so we need to check both
-			delete[] movement;//we currently have tons of memory leaks, we have to start managing memory properly
-			movement = temp;
-		}else delete[] temp;
+		if(abs(temp[0]) < abs(movement[0])){//hit a wall, x vector is closer to 0
+			movement[0] = temp[0];
+		}
+		if(temp[1] < movement[1] && movement[1] > 0){//hit a floor
+			movement[1] = temp[1];
+			player.setGrounded(true);//only ground on floor hit, not ceiling hit
+		}else if(temp[1] > movement[1] && movement[1] < 0){//hit a ceiling
+			movement[1] = temp[1];
+		}
 	}
 	//if no collisions, move object (before checking the next object), else compute collision behavior
 	player.addCoord(movement[0], movement[1]);
-	printf("%4f : %4f \n", player.getYCoord(), movement[1]);
 	delete[] movement;
 
 	//check door and water for win/loss
