@@ -121,7 +121,7 @@ void gameDisplay::update(vector<object> objects, bool win, bool lose) {
 	// Draw platforms
 	SDL_SetRenderDrawColor(renderer, 0xc2, 0xc5, 0xcc, 0xff);
 	for (int i = 3; i < objects.size(); i++) {
-		SDL_Rect platform = {objects.at(i).getXCoord(), objects.at(i).getYCoord(), objects.at(i).getWidth(), objects.at(i).getHeight()};
+		SDL_Rect platform = {static_cast<int>(objects.at(i).getXCoord()), static_cast<int>(objects.at(i).getYCoord()), objects.at(i).getWidth(), objects.at(i).getHeight()};
 		SDL_RenderFillRect(renderer, &platform);
 	}
 
