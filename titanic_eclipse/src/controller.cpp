@@ -22,7 +22,7 @@ Controller::Controller(int fps, int tps) {
 	this->t_time = CLOCKS_PER_SEC / tps;
 
     activeScreen = gameDisplay("titanic", HEIGHT, WIDTH);
-    activeScreen.levelInit(910, 50);
+    activeScreen.levelInit(800, 50);
     keyboardIo = keyboardInput();
 }
 
@@ -92,5 +92,5 @@ void Controller::doPhysics() {//to be implemented in the physics branch
 }
 
 void Controller::doFrame() {//to be implemented in the view branch
-	activeScreen.update(getVisibleObjects(HEIGHT, WIDTH), false, false);//will eventually include checks on victory or loss conditions
+	activeScreen.update(getVisibleObjects(HEIGHT, WIDTH), getKeyStates(), false, false);//will eventually include checks on victory or loss conditions
 }

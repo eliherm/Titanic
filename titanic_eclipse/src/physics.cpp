@@ -91,16 +91,12 @@ void object::setGrounded(const bool newval) {
 
 physicsEngine::physicsEngine() {
 	player = object(416, 300, 128, 240, PLAYERGRAVITY);
-	door = object(400, 50, 40, 80, 0);
-	water = object(0, 360, 960, 10, 0);
+	door = object(800, 50, 40, 80, 0);
+	water = object(0, 0, 960, 10, 0);
 	platforms = vector<object>();
 	platforms.emplace_back(object(384, 540, 64, 19, 0));
     platforms.emplace_back(object(448, 540, 64, 19, 0));
     platforms.emplace_back(object(512, 540, 64, 19, 0));
-    platforms.emplace_back(object(0, 300, 64, 19, 0));
-    //platforms.emplace_back(object(770, 300, 200, 10, 0));
-    //platforms.emplace_back(object(0, 150, 200, 10, 0));
-    //platforms.emplace_back(object(400, 50, 300, 10, 0));
 }
 
 physicsEngine::physicsEngine(object player, object door, object water, vector<object> platforms) {

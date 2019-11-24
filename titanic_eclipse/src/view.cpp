@@ -84,12 +84,10 @@ void gameDisplay::levelInit(const int& doorX, const int& doorY) {
     // Initialize platforms
     platforms.spriteSheet = new TextureWrap(renderer, "../titanic_eclipse/assets/industrial.v1.png");
     SDL_Rect platform1 = {192, 0, 64, 19};
-    SDL_Rect platform2 = {0, 0, 192, 32};
     platforms.spriteClips.push_back(platform1);
-    platforms.spriteClips.push_back(platform2);
 }
 
-void gameDisplay::update(vector<object> objects, bool win, bool lose) {
+void gameDisplay::update(vector<object> objects, vector<bool> keys, bool win, bool lose) {
 	// update objects
 	player.setPos(objects.at(0).getXCoord(), objects.at(0).getYCoord());
 	water.setPos(0, objects.at(2).getYCoord());
@@ -105,13 +103,18 @@ void gameDisplay::update(vector<object> objects, bool win, bool lose) {
     platforms.spriteSheet->render(objects.at(3).getXCoord(), objects.at(3).getYCoord(), &(platforms.spriteClips.at(0)));
     platforms.spriteSheet->render(objects.at(4).getXCoord(), objects.at(4).getYCoord(), &(platforms.spriteClips.at(0)));
     platforms.spriteSheet->render(objects.at(5).getXCoord(), objects.at(5).getYCoord(), &(platforms.spriteClips.at(0)));
-    platforms.spriteSheet->render(objects.at(6).getXCoord(), objects.at(5).getYCoord(), &(platforms.spriteClips.at(1)));
 
-	// Render player
-    //player.spriteSheet->render(player.getXPos(), player.getYPos(), &(player.spriteClips.at(0)));
+    // Render player
+    if(keys[2] && !keys[3]) { // Left
+        player.spriteSheet->render(player.getXPos(), player.getYPos(), &(player.spriteClips.at(1)));
+    } else if(keys[3] && !keys[2]){ // Right
+        player.spriteSheet->render(player.getXPos(), player.getYPos(), &(player.spriteClips.at(2)));
+    } else {
+        player.spriteSheet->render(player.getXPos(), player.getYPos(), &(player.spriteClips.at(0)));
+    }
 
     // Render water
-    //water.spriteSheet->render(0, water.getYPos(), nullptr);
+    water.spriteSheet->render(0, water.getYPos(), nullptr);
 
 	// Dumping buffer to screen
 	SDL_RenderPresent(renderer);
