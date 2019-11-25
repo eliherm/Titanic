@@ -7,7 +7,7 @@
 #include <iostream>
 #include "physics.h"
 
-const double PLAYERGRAVITY = 0.5, JUMPSPEED = 10, MAXRUNSPEED = 2, RUNACCELERATION = 0.2;
+const double PLAYERGRAVITY = 0.5, JUMPSPEED = 10, MAXRUNSPEED = 4, RUNACCELERATION = 0.6; //Originally: 0.5, 10, 2, 0.2
 
 using namespace std;
 
