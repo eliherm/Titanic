@@ -1,10 +1,13 @@
 #include <SDL2/SDL.h>
-#include <SDL_image.h>
+#include <SDL2/SDL_image.h>
 #include <iostream>
 #include <utility>
 #include <vector>
 #include "view.h"
+#include <iostream>
 using namespace std;
+
+#define ANIMATION_DELAY 10   // Controls how fast frames are rendered in an animation cycle
 
 gameDisplay::gameDisplay(): WIDTH(0), HEIGHT(0), window(nullptr), renderer(nullptr) {}
 gameDisplay::gameDisplay(const string& windowName, const int& height, const int& width) {
@@ -64,13 +67,33 @@ void gameDisplay::levelInit(const int& doorX, const int& doorY) {
 
     // Initialize player textures
     player.spriteSheet = new TextureWrap(renderer, "../titanic_eclipse/assets/player.png");
-    SDL_Rect playerFrontClip = {32, 24, 128, 240};  // Front
-    SDL_Rect playerLeftClip = {552, 288, 104, 240}; // Left
-    SDL_Rect playerRightClip = {552, 24, 104, 240}; // Right
-    SDL_Rect playerBackClip = {32, 288, 128, 240};  // Back
+
+    /*
+     * Initialize animation parameters for the player
+     * playerFrames[0][x] -> Current frame for a given direction
+     * playerFrames[1][x] -> Total number of frames for a given direction
+     */
+    vector<vector<int>> playerFrames { {0, 0, 0}, {1, 3, 3} };
+    player.enableAnimation(playerFrames);
+
+    // Set sprite clips for the player
+    SDL_Rect playerFrontClip = {32, 24, 128, 240};      // Front sprite
+    SDL_Rect playerLeftClip1 = {552, 288, 104, 240};    // Left sprite (frame 1)
+    SDL_Rect playerLeftClip2 = {680, 288, 120, 240};    // Left sprite (frame 2)
+    SDL_Rect playerLeftClip3 = {816, 288, 120, 240};    // Left sprite (frame 3)
+
+    SDL_Rect playerRightClip1 = {552, 24, 104, 240};    // Right sprite (frame 1)
+    SDL_Rect playerRightClip2 = {688, 24, 120, 240};    // Right sprite (frame 2)
+    SDL_Rect playerRightClip3 = {840, 24, 120, 240};    // Right sprite (frame 3)
+    SDL_Rect playerBackClip = {32, 288, 128, 240};      // Back sprite
+
     player.spriteClips.push_back(playerFrontClip);
-    player.spriteClips.push_back(playerLeftClip);
-    player.spriteClips.push_back(playerRightClip);
+    player.spriteClips.push_back(playerLeftClip1);
+    player.spriteClips.push_back(playerLeftClip2);
+    player.spriteClips.push_back(playerLeftClip3);
+    player.spriteClips.push_back(playerRightClip1);
+    player.spriteClips.push_back(playerRightClip2);
+    player.spriteClips.push_back(playerRightClip3);
     player.spriteClips.push_back(playerBackClip);
 
     // Initialize water textures
@@ -104,13 +127,35 @@ void gameDisplay::update(vector<object> objects, vector<bool> keys, bool win, bo
         platforms.spriteSheet->render(objects.at(i).getXCoord(), objects.at(i).getYCoord(), &(platforms.spriteClips.at(0)));
 	}
 
-    // Render player
+    // Render player with animation
     if(keys[2] && !keys[3]) { // Left
-        player.spriteSheet->render(player.getXPos(), player.getYPos(), &(player.spriteClips.at(1)));
+        // Reset frame information for other directions
+        for (auto i : player.frames[0]) {
+            if (i != 1) i = 0;
+        }
+
+        // Render the frame
+        player.spriteSheet->render(player.getXPos(), player.getYPos(), &(player.spriteClips.at(1 + (player.frames[0][1] / ANIMATION_DELAY))));
+
+        // Increment frame count for left direction
+        player.frames[0][1]++;
+        if (player.frames[0][1] / ANIMATION_DELAY >= player.frames[1][1])
+            player.frames[0][1] = 0;
     } else if(keys[3] && !keys[2]){ // Right
-        player.spriteSheet->render(player.getXPos(), player.getYPos(), &(player.spriteClips.at(2)));
+        // Reset frame information for other directions
+        for (auto i : player.frames[0]) {
+            if (i != 2) i = 0;
+        }
+
+        // Render the frame
+        player.spriteSheet->render(player.getXPos(), player.getYPos(), &(player.spriteClips.at(4 + (player.frames[0][2] / ANIMATION_DELAY))));
+
+        // Increment frame count for right direction
+        player.frames[0][2]++;
+        if (player.frames[0][2] / ANIMATION_DELAY >= player.frames[1][2])
+            player.frames[0][2] = 0;
     } else {
-        player.spriteSheet->render(player.getXPos(), player.getYPos(), &(player.spriteClips.at(0)));
+         player.spriteSheet->render(player.getXPos(), player.getYPos(), &(player.spriteClips.at(0)));
     }
 
     // Render water

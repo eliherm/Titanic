@@ -32,6 +32,7 @@ public:
     sprite(const int& xpos, const int& ypos, const int& width, const int& height);
     void setPos(const int& xpos, const int& ypos);
     void setDim(const int& wdth, const int& hght);
+    void enableAnimation(const vector<vector<int>>& framesInfo);
 
     int getWidth() const;
     int getHeight() const;
@@ -40,6 +41,9 @@ public:
 
     TextureWrap* spriteSheet;
     vector<SDL_Rect> spriteClips;
+
+    // Holds frame information for animation
+    vector<vector<int>> frames;
 private:
     int xcoord;
     int ycoord;

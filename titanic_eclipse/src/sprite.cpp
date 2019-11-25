@@ -28,6 +28,11 @@ void sprite::setPos(const int &xpos, const int &ypos) { //setting specific posit
     ycoord = ypos;
 }
 
+// Initializes a sprite with animation information
+void sprite::enableAnimation(const vector<vector<int>>& framesInfo) {
+    frames = vector<vector<int>>(framesInfo);
+}
+
 // Sprite Accessors
 int sprite::getWidth() const { return this->width; }
 int sprite::getHeight() const { return this->height; }
