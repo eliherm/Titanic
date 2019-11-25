@@ -70,8 +70,8 @@ void gameDisplay::levelInit(const int& doorX, const int& doorY) {
 
     /*
      * Initialize animation parameters for the player
-     * playerFrames[0][x] -> Current frame for a given direction
-     * playerFrames[1][x] -> Total number of frames for a given direction
+     * playerFrames[0][x] -> Current frame for a given direction x
+     * playerFrames[1][x] -> Total number of frames for a given direction x
      */
     vector<vector<int>> playerFrames { {0, 0, 0}, {1, 3, 3} };
     player.enableAnimation(playerFrames);
