@@ -2,7 +2,7 @@
 #include "sprite.h"
 #include "view.h"
 
-sprite::sprite() {
+sprite::sprite() { //initialize all variables
     this->xcoord = 0;
     this->ycoord = 0;
     this->width = 0;
@@ -10,7 +10,7 @@ sprite::sprite() {
     this->spriteSheet = nullptr;
 }
 
-sprite::sprite(const int &xpos, const int &ypos, const int &width, const int &height) {
+sprite::sprite(const int &xpos, const int &ypos, const int &width, const int &height) { //setting all variables
     this->xcoord = xpos;
     this->ycoord = ypos;
     this->width = width;
@@ -18,12 +18,12 @@ sprite::sprite(const int &xpos, const int &ypos, const int &width, const int &he
     this->spriteSheet = nullptr;
 }
 
-void sprite::setDim(const int& wdth, const int& hght) {
+void sprite::setDim(const int& wdth, const int& hght) { //setting specific dimensions
     this->width = wdth;
     this->height = hght;
 }
 
-void sprite::setPos(const int &xpos, const int &ypos) {
+void sprite::setPos(const int &xpos, const int &ypos) { //setting specific position
     xcoord = xpos;
     ycoord = ypos;
 }
@@ -35,16 +35,16 @@ int sprite::getXPos() const { return this->xcoord; }
 int sprite::getYPos() const { return this->ycoord; }
 
 
-TextureWrap::TextureWrap(SDL_Renderer* renderer, const string& path) : renderer(renderer), imgWidth(0), imgHeight(0) {
+TextureWrap::TextureWrap(SDL_Renderer* renderer, const string& path) : renderer(renderer), imgWidth(0), imgHeight(0) { //first time giving an item a texture
     mainTexture =nullptr;
     loadFromFile(path);
 }
 
-TextureWrap::~TextureWrap() {
+TextureWrap::~TextureWrap() { //destructor
     free();
 }
 
-void TextureWrap::loadFromFile(const string& path) {
+void TextureWrap::loadFromFile(const string& path) { // how to set new texture
     // Get rid of preexisting texture
     free();
 
@@ -73,10 +73,11 @@ void TextureWrap::loadFromFile(const string& path) {
     // Free up loaded surface
     SDL_FreeSurface(loadedSurface);
 
+    //set all changes to main texture
     mainTexture = newTexture;
 }
 
-void TextureWrap::free() {
+void TextureWrap::free() { //getting rid of a texture
     // Free texture if it exists
     if (mainTexture != nullptr) {
         SDL_DestroyTexture(mainTexture);
