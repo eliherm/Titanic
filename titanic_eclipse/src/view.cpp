@@ -1,5 +1,5 @@
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+#include <SDL_image.h>
 #include <iostream>
 #include <utility>
 #include <vector>
@@ -31,7 +31,7 @@ gameDisplay::gameDisplay(const string& windowName, const int& height, const int&
         }
 
         // Create renderer for the window
-        renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+        renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
         if (renderer == nullptr) {
             throw SDLException("The renderer could not be created!");
         }
