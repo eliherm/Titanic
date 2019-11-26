@@ -17,13 +17,16 @@ using namespace std;
 
 #define ANIMATION_DELAY 10  // Controls how fast frames are rendered in an animation cycle
 
-gameDisplay::gameDisplay(): WIDTH(0), HEIGHT(0), window(nullptr), renderer(nullptr), camera({0, 0, WIDTH, HEIGHT}) {}
+gameDisplay::gameDisplay(): WIDTH(0), HEIGHT(0), window(nullptr),
+		renderer(nullptr), camera({0, 0, WIDTH, HEIGHT}), menuState(start), optionSelected(0){}
 gameDisplay::gameDisplay(const string& windowName, const int& width, const int& height) {
     WIDTH = width;
     HEIGHT = height;
     window = nullptr;
     renderer = nullptr;
     camera = {0, 0, WIDTH, HEIGHT};
+    menuState = start;
+    optionSelected = 0;
 
     try {
         // Initialize SDL
@@ -211,6 +214,16 @@ void gameDisplay::close() {
 
 	// Quit SDL subsystems
 	SDL_Quit();
+}
+
+void gameDisplay::setMenu(const menuStateType& menu) {
+	this->menuState = menu;
+}
+
+bool updateMenu(vector<bool> keys) {
+	if(menuState == start) {
+
+	}
 }
 
 SDLException::SDLException(string msg): errMsg(move(msg)) {}

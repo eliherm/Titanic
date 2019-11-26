@@ -11,6 +11,8 @@
 #include "sprite.h"
 using namespace std;
 
+enum menuStateType { start, pause, win, lose };
+
 class gameDisplay {
 public:
     gameDisplay();                                                                  // Initialize null objects
@@ -18,6 +20,8 @@ public:
     void levelInit(const int& doorX, const int& doorY);                             // Initialize a level
     void update(vector<object> objects, vector<bool> keys, bool grounded, bool win, bool lose);    // Updates all objects
     void close();                                                                   // Free up resources
+    void setMenu(const menuStateType& menu);
+    bool updateMenu(vector<bool> keys);
 private:
     // Main window
 	SDL_Window* window;
@@ -33,6 +37,9 @@ private:
 	sprite platforms;
 
     SDL_Rect camera;  // Rectangle to track player movement in the level
+
+    menuStateType menuState;
+    int optionSelected;
 };
 
 // Handles SDL exceptions
