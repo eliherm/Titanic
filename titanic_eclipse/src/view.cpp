@@ -125,13 +125,13 @@ void gameDisplay::update(vector<object> objects, vector<bool> keys, bool win, bo
     SDL_RenderClear(renderer);
 
     // Render door
-    if (door.getYPos() >= 0 and door.getYPos() <= camera.y + HEIGHT) {
+    if (door.getYPos() >= 0 and door.getYPos() <= camera.y + HEIGHT) { //this condition checks if the door is within the view of the player
         door.spriteSheet->render(door.getXPos(), door.getYPos(), &(door.spriteClips.at(0)));
     }
 
 	// Draw platforms
 	for (int i = 3; i < objects.size(); i++) {
-        if (objects.at(i).getYCoord() >= 0 and objects.at(i).getYCoord() <= camera.y + HEIGHT) {
+        if (objects.at(i).getYCoord() >= 0 and objects.at(i).getYCoord() <= camera.y + HEIGHT) { //this condition checks if the platforms are within the view of the player
             platforms.spriteSheet->render(objects.at(i).getXCoord(), objects.at(i).getYCoord(),
                                           &(platforms.spriteClips.at(0)));
         }
@@ -180,7 +180,7 @@ void gameDisplay::update(vector<object> objects, vector<bool> keys, bool win, bo
     }
 
     // Render water
-    if (water.getYPos() >= 0 and water.getYPos() <= camera.y + HEIGHT)
+    if (water.getYPos() >= 0 and water.getYPos() <= camera.y + HEIGHT) //this condition checks if the water is in the view of the player
         water.spriteSheet->render(0, water.getYPos(), nullptr);
 
 	// Dumping buffer to screen
