@@ -66,8 +66,8 @@ void gameDisplay::levelInit(const int& doorX, const int& doorY) {
 	// Setting door position
 	door.setPos(doorX, doorY);
 
-    // Initialize player textures
-    player.spriteSheet = new TextureWrap(renderer, "../titanic_eclipse/assets/player.png");
+    // Initialize player textures					//WILL HAVE TO CHANGE THE SLASHES FOR MAC/WINDOWS EVERY TIME
+    player.spriteSheet = new TextureWrap(renderer, "..\\titanic\\titanic_eclipse\\assets\\player.png");
 
     /*
      * Initialize animation parameters for the player
@@ -97,16 +97,16 @@ void gameDisplay::levelInit(const int& doorX, const int& doorY) {
     player.spriteClips.push_back(playerRightClip3);
     player.spriteClips.push_back(playerBackClip);
 
-    // Initialize water textures
-    water.spriteSheet = new TextureWrap(renderer, "../titanic_eclipse/assets/water.png");
+    // Initialize water textures					//WILL HAVE TO CHANGE THE SLASHES FOR MAC/WINDOWS EVERY TIME
+    water.spriteSheet = new TextureWrap(renderer, "..\\titanic\\titanic_eclipse\\assets\\water.png");
 
-    // Initialize door textures
-    door.spriteSheet = new TextureWrap(renderer, "../titanic_eclipse/assets/door.png");
+    // Initialize door textures						//WILL HAVE TO CHANGE THE SLASHES FOR MAC/WINDOWS EVERY TIME
+    door.spriteSheet = new TextureWrap(renderer, "..\\titanic\\titanic_eclipse\\assets\\door.png");
     SDL_Rect doorClip = {193, 384, 46, 95};
     door.spriteClips.push_back(doorClip);
 
-    // Initialize platforms
-    platforms.spriteSheet = new TextureWrap(renderer, "../titanic_eclipse/assets/industrial.v1.png");
+    // Initialize platforms								//WILL HAVE TO CHANGE THE SLASHES FOR MAC/WINDOWS EVERY TIME
+    platforms.spriteSheet = new TextureWrap(renderer, "..\\titanic\\titanic_eclipse\\assets\\industrial.v1.png");
     SDL_Rect platform1 = {192, 0, 64, 19};
     platforms.spriteClips.push_back(platform1);
 }
