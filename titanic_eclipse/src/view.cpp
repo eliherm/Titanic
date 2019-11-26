@@ -1,5 +1,5 @@
 #include <SDL2/SDL.h>
-#include <SDL_image.h>
+#include <SDL2/SDL_image.h>
 #include <iostream>
 #include <utility>
 #include <vector>
@@ -59,6 +59,7 @@ gameDisplay::gameDisplay(const string& windowName, const int& height, const int&
 void gameDisplay::levelInit(const int& doorX, const int& doorY) {
 	// Setting player, water, and door dimensions
 	player.setDim(128, 240);
+	camera = {0, player.getYPos() , WIDTH, HEIGHT };
     water.setDim(WIDTH, HEIGHT);
     door.setDim(40, 80);
 
@@ -113,6 +114,10 @@ void gameDisplay::levelInit(const int& doorX, const int& doorY) {
 void gameDisplay::update(vector<object> objects, vector<bool> keys, bool win, bool lose, bool grounded) {
 	// update objects
 	player.setPos(objects.at(0).getXCoord(), objects.at(0).getYCoord());
+
+	// update camera location
+	camera.y = player.getYPos();
+
 	water.setPos(0, objects.at(2).getYCoord());
 
     // Clear screen
@@ -120,11 +125,16 @@ void gameDisplay::update(vector<object> objects, vector<bool> keys, bool win, bo
     SDL_RenderClear(renderer);
 
     // Render door
-    door.spriteSheet->render(door.getXPos(), door.getYPos(), &(door.spriteClips.at(0)));
+    if (door.getYPos() >= 0 and door.getYPos() <= camera.y + HEIGHT) {
+        door.spriteSheet->render(door.getXPos(), door.getYPos(), &(door.spriteClips.at(0)));
+    }
 
 	// Draw platforms
 	for (int i = 3; i < objects.size(); i++) {
-        platforms.spriteSheet->render(objects.at(i).getXCoord(), objects.at(i).getYCoord(), &(platforms.spriteClips.at(0)));
+        if (objects.at(i).getYCoord() >= 0 and objects.at(i).getYCoord() <= camera.y + HEIGHT) {
+            platforms.spriteSheet->render(objects.at(i).getXCoord(), objects.at(i).getYCoord(),
+                                          &(platforms.spriteClips.at(0)));
+        }
 	}
 
     // Render player with animation
@@ -170,7 +180,8 @@ void gameDisplay::update(vector<object> objects, vector<bool> keys, bool win, bo
     }
 
     // Render water
-    water.spriteSheet->render(0, water.getYPos(), nullptr);
+    if (water.getYPos() >= 0 and water.getYPos() <= camera.y + HEIGHT)
+        water.spriteSheet->render(0, water.getYPos(), nullptr);
 
 	// Dumping buffer to screen
 	SDL_RenderPresent(renderer);

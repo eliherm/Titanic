@@ -31,6 +31,8 @@ private:
     sprite water;
 	sprite door;
 	sprite platforms;
+
+    SDL_Rect camera;
 };
 
 // Handles SDL exceptions
