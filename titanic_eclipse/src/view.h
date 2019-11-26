@@ -32,7 +32,7 @@ private:
 	sprite door;
 	sprite platforms;
 
-    SDL_Rect camera;
+    SDL_Rect camera;  // Rectangle to track player movement in the level
 };
 
 // Handles SDL exceptions

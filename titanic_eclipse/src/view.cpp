@@ -112,76 +112,59 @@ void gameDisplay::levelInit(const int& doorX, const int& doorY) {
 }
 
 void gameDisplay::update(vector<object> objects, vector<bool> keys, bool win, bool lose, bool grounded) {
-	// update objects
+	// Update objects
 	player.setPos(objects.at(0).getXCoord(), objects.at(0).getYCoord());
+    water.setPos(0, objects.at(2).getYCoord());
 
-	// update camera location
-	camera.y = player.getYPos();
-
-	water.setPos(0, objects.at(2).getYCoord());
+	// Update camera location to the center of the player in the y-axis
+	camera.y = (player.getYPos() + player.getHeight() / 2) - HEIGHT / 2;
 
     // Clear screen
     SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
     SDL_RenderClear(renderer);
 
     // Render door
-    if (door.getYPos() >= 0 and door.getYPos() <= camera.y + HEIGHT) {
-        door.spriteSheet->render(door.getXPos(), door.getYPos(), &(door.spriteClips.at(0)));
-    }
+    door.spriteSheet->render(door.getXPos(), door.getYPos() - camera.y, &(door.spriteClips.at(0)));
 
 	// Draw platforms
 	for (int i = 3; i < objects.size(); i++) {
-        if (objects.at(i).getYCoord() >= 0 and objects.at(i).getYCoord() <= camera.y + HEIGHT) {
-            platforms.spriteSheet->render(objects.at(i).getXCoord(), objects.at(i).getYCoord(),
+        platforms.spriteSheet->render(objects.at(i).getXCoord(), objects.at(i).getYCoord() - camera.y,
                                           &(platforms.spriteClips.at(0)));
-        }
 	}
 
     // Render player with animation
-    if(keys[2] && !keys[3]) { // Left
+    if (keys[2] && !keys[3] && grounded) { // Left
         // Reset frame information for other directions
-        for (auto i : player.frames[0]) {
+        for (auto i : player.frames[0])
             if (i != 1) i = 0;
-        }
 
         // Render the frame
-        if (grounded) {
-            player.spriteSheet->render(player.getXPos(), player.getYPos(),
-                                       &(player.spriteClips.at(1 + (player.frames[0][1] / ANIMATION_DELAY))));
+        player.spriteSheet->render(player.getXPos(), player.getYPos() - camera.y,
+                                   &(player.spriteClips.at(1 + (player.frames[0][1] / ANIMATION_DELAY))));
 
-            // Increment frame count for left direction
-            player.frames[0][1]++;
-            if (player.frames[0][1] / ANIMATION_DELAY >= player.frames[1][1])
-                player.frames[0][1] = 0;
-        } else {
-            // Render jumping animation
-            player.spriteSheet->render(player.getXPos(), player.getYPos(), &(player.spriteClips.at(0)));
-        }
-    } else if(keys[3] && !keys[2]){ // Right
+        // Increment frame count for left direction
+        player.frames[0][1]++;
+        if (player.frames[0][1] / ANIMATION_DELAY >= player.frames[1][1])
+            player.frames[0][1] = 0;
+    } else if (keys[3] && !keys[2] && grounded) { // Right
         // Reset frame information for other directions
-        for (auto i : player.frames[0]) {
+        for (auto i : player.frames[0])
             if (i != 2) i = 0;
-        }
 
-        if (grounded) {
-            // Render the frame
-            player.spriteSheet->render(player.getXPos(), player.getYPos(),
-                                       &(player.spriteClips.at(4 + (player.frames[0][2] / ANIMATION_DELAY))));
+        // Render the frame
+        player.spriteSheet->render(player.getXPos(), player.getYPos() - camera.y,
+                                   &(player.spriteClips.at(4 + (player.frames[0][2] / ANIMATION_DELAY))));
 
-            // Increment frame count for right direction
-            player.frames[0][2]++;
-            if (player.frames[0][2] / ANIMATION_DELAY >= player.frames[1][2])
-                player.frames[0][2] = 0;
-        } else {
-            player.spriteSheet->render(player.getXPos(), player.getYPos(), &(player.spriteClips.at(0)));
-        }
+        // Increment frame count for right direction
+        player.frames[0][2]++;
+        if (player.frames[0][2] / ANIMATION_DELAY >= player.frames[1][2])
+            player.frames[0][2] = 0;
     } else {
-         player.spriteSheet->render(player.getXPos(), player.getYPos(), &(player.spriteClips.at(0)));
+         player.spriteSheet->render(player.getXPos(), player.getYPos() - camera.y, &(player.spriteClips.at(0)));
     }
 
     // Render water
-    if (water.getYPos() >= 0 and water.getYPos() <= camera.y + HEIGHT)
-        water.spriteSheet->render(0, water.getYPos(), nullptr);
+    water.spriteSheet->render(0, water.getYPos() - camera.y, nullptr);
 
 	// Dumping buffer to screen
 	SDL_RenderPresent(renderer);
