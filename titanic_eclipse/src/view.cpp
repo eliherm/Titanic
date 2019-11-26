@@ -138,7 +138,9 @@ void gameDisplay::update(vector<object> objects, vector<bool> keys, bool win, bo
 	}
 
     // Render player with animation
-    if(keys[2] && !keys[3]) { // Left
+
+	//LEFT
+    if(keys[2] && !keys[3]) {
         // Reset frame information for other directions
         for (auto i : player.frames[0]) {
             if (i != 1) i = 0;
@@ -157,7 +159,9 @@ void gameDisplay::update(vector<object> objects, vector<bool> keys, bool win, bo
 
             player.spriteSheet->render(player.getXPos(), player.getYPos(), &(player.spriteClips.at(0)));
         }
-    } else if(keys[3] && !keys[2]){ // Right
+
+        //RIGHT
+    } else if(keys[3] && !keys[2]){
         // Reset frame information for other directions
         for (auto i : player.frames[0]) {
             if (i != 2) i = 0;
@@ -175,7 +179,8 @@ void gameDisplay::update(vector<object> objects, vector<bool> keys, bool win, bo
         } else { //this is for when the player is moving right but in the air, if we want to render a different animation
             player.spriteSheet->render(player.getXPos(), player.getYPos(), &(player.spriteClips.at(0)));
         }
-    } else { //player not moving
+        //NOT MOVING
+    } else {
          player.spriteSheet->render(player.getXPos(), player.getYPos(), &(player.spriteClips.at(0)));
     }
 
