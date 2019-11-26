@@ -21,9 +21,17 @@ Controller::Controller(int fps, int tps) {
 	this->f_time = CLOCKS_PER_SEC / fps;
 	this->t_time = CLOCKS_PER_SEC / tps;
 
-    activeScreen = gameDisplay("titanic", HEIGHT, WIDTH);
-    activeScreen.levelInit(800, 50);
-    keyboardIo = keyboardInput();
+	try {
+        activeScreen = gameDisplay("titanic", HEIGHT, WIDTH);
+        activeScreen.levelInit(800, 50);
+        keyboardIo = keyboardInput();
+    } catch (SDLImgException& e) {
+        cerr << e.what() << endl;
+        exit(1);
+    } catch(SDLException& e) {
+        cerr << e.what() << endl;
+        exit(1);
+    }
 }
 
 void Controller::run() {
