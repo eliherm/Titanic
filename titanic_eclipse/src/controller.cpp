@@ -100,5 +100,5 @@ void Controller::doPhysics() {//to be implemented in the physics branch
 }
 
 void Controller::doFrame() {//to be implemented in the view branch
-	activeScreen.update(getVisibleObjects(HEIGHT, WIDTH), getKeyStates(), false, false);//will eventually include checks on victory or loss conditions
+	activeScreen.update(getVisibleObjects(HEIGHT, WIDTH), getKeyStates(), false, false, activeEngine.getState()[0].isGrounded());//will eventually include checks on victory or loss conditions
 }
