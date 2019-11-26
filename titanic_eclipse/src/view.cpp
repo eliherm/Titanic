@@ -1,5 +1,5 @@
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+#include <SDL_image.h>
 #include <iostream>
 #include <utility>
 #include <vector>
@@ -110,7 +110,7 @@ void gameDisplay::levelInit(const int& doorX, const int& doorY) {
     platforms.spriteClips.push_back(platform1);
 }
 
-void gameDisplay::update(vector<object> objects, vector<bool> keys, bool win, bool lose) {
+void gameDisplay::update(vector<object> objects, vector<bool> keys, bool win, bool lose, bool grounded) {
 	// update objects
 	player.setPos(objects.at(0).getXCoord(), objects.at(0).getYCoord());
 	water.setPos(0, objects.at(2).getYCoord());
@@ -135,25 +135,36 @@ void gameDisplay::update(vector<object> objects, vector<bool> keys, bool win, bo
         }
 
         // Render the frame
-        player.spriteSheet->render(player.getXPos(), player.getYPos(), &(player.spriteClips.at(1 + (player.frames[0][1] / ANIMATION_DELAY))));
+        if (grounded) {
+            player.spriteSheet->render(player.getXPos(), player.getYPos(),
+                                       &(player.spriteClips.at(1 + (player.frames[0][1] / ANIMATION_DELAY))));
 
-        // Increment frame count for left direction
-        player.frames[0][1]++;
-        if (player.frames[0][1] / ANIMATION_DELAY >= player.frames[1][1])
-            player.frames[0][1] = 0;
+            // Increment frame count for left direction
+            player.frames[0][1]++;
+            if (player.frames[0][1] / ANIMATION_DELAY >= player.frames[1][1])
+                player.frames[0][1] = 0;
+        } else {
+            // Render jumping animation
+            player.spriteSheet->render(player.getXPos(), player.getYPos(), &(player.spriteClips.at(0)));
+        }
     } else if(keys[3] && !keys[2]){ // Right
         // Reset frame information for other directions
         for (auto i : player.frames[0]) {
             if (i != 2) i = 0;
         }
 
-        // Render the frame
-        player.spriteSheet->render(player.getXPos(), player.getYPos(), &(player.spriteClips.at(4 + (player.frames[0][2] / ANIMATION_DELAY))));
+        if (grounded) {
+            // Render the frame
+            player.spriteSheet->render(player.getXPos(), player.getYPos(),
+                                       &(player.spriteClips.at(4 + (player.frames[0][2] / ANIMATION_DELAY))));
 
-        // Increment frame count for right direction
-        player.frames[0][2]++;
-        if (player.frames[0][2] / ANIMATION_DELAY >= player.frames[1][2])
-            player.frames[0][2] = 0;
+            // Increment frame count for right direction
+            player.frames[0][2]++;
+            if (player.frames[0][2] / ANIMATION_DELAY >= player.frames[1][2])
+                player.frames[0][2] = 0;
+        } else {
+            player.spriteSheet->render(player.getXPos(), player.getYPos(), &(player.spriteClips.at(0)));
+        }
     } else {
          player.spriteSheet->render(player.getXPos(), player.getYPos(), &(player.spriteClips.at(0)));
     }

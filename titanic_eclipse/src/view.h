@@ -16,7 +16,7 @@ public:
     gameDisplay();                                                                  // Initialize null objects
     gameDisplay(const string& windowName, const int& hght, const int& wdth);        // Constructor
     void levelInit(const int& doorX, const int& doorY);                             // Initialize a level
-    void update(vector<object> objects, vector<bool> keys, bool win, bool lose);    // Updates all objects
+    void update(vector<object> objects, vector<bool> keys, bool win, bool lose, bool grounded);    // Updates all objects
     void close();                                                                   // Free up resources
 private:
     // Main window
