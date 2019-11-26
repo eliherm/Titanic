@@ -153,8 +153,8 @@ void gameDisplay::update(vector<object> objects, vector<bool> keys, bool win, bo
             player.frames[0][1]++;
             if (player.frames[0][1] / ANIMATION_DELAY >= player.frames[1][1])
                 player.frames[0][1] = 0;
-        } else {
-            // Render jumping animation
+        } else { //this is for when the player is moving left but in the air, if we want to render a different animation
+
             player.spriteSheet->render(player.getXPos(), player.getYPos(), &(player.spriteClips.at(0)));
         }
     } else if(keys[3] && !keys[2]){ // Right
@@ -172,10 +172,10 @@ void gameDisplay::update(vector<object> objects, vector<bool> keys, bool win, bo
             player.frames[0][2]++;
             if (player.frames[0][2] / ANIMATION_DELAY >= player.frames[1][2])
                 player.frames[0][2] = 0;
-        } else {
+        } else { //this is for when the player is moving right but in the air, if we want to render a different animation
             player.spriteSheet->render(player.getXPos(), player.getYPos(), &(player.spriteClips.at(0)));
         }
-    } else {
+    } else { //player not moving
          player.spriteSheet->render(player.getXPos(), player.getYPos(), &(player.spriteClips.at(0)));
     }
 
