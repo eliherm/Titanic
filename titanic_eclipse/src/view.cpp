@@ -1,13 +1,21 @@
+#define WINDOWS   // Define the platform
+
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 #include <iostream>
 #include <utility>
 #include <vector>
 #include "view.h"
 #include <iostream>
+
+// Include the SDL image header based on the platform
+#ifdef WINDOWS
+    #include <SDL2/SDL_image.h>
+#else
+    #include <SDL_image.h>
+#endif
 using namespace std;
 
-#define ANIMATION_DELAY 10   // Controls how fast frames are rendered in an animation cycle
+#define ANIMATION_DELAY 10  // Controls how fast frames are rendered in an animation cycle
 
 gameDisplay::gameDisplay(): WIDTH(0), HEIGHT(0), window(nullptr), renderer(nullptr) {}
 gameDisplay::gameDisplay(const string& windowName, const int& height, const int& width) {
@@ -66,14 +74,28 @@ void gameDisplay::levelInit(const int& doorX, const int& doorY) {
 	// Setting door position
 	door.setPos(doorX, doorY);
 
+	// Initialize the paths to textures
+#ifdef WINDOWS
+    string playerTexPath = "..\\titanic\\titanic_eclipse\\assets\\player.png";
+    string waterTexPath = "..\\titanic\\titanic_eclipse\\assets\\water.png";
+    string doorTexPath = "..\\titanic\\titanic_eclipse\\assets\\door.png";
+    string platformsTexPath = "..\\titanic\\titanic_eclipse\\assets\\industrial.v1.png";
+#else
+    string playerTexPath = "../titanic_eclipse/assets/player.png";
+    string waterTexPath = "../titanic_eclipse/assets/water.png";
+    string doorTexPath = "../titanic_eclipse/assets/door.png";
+    string platformsTexPath = "../titanic_eclipse/assets/industrial.v1.png";
+#endif
+
     // Initialize player textures
-    player.spriteSheet = new TextureWrap(renderer, "../titanic_eclipse/assets/player.png");
+    player.spriteSheet = new TextureWrap(renderer, playerTexPath);
 
     /*
      * Initialize animation parameters for the player
      * playerFrames[0][x] -> Current frame for a given direction x
      * playerFrames[1][x] -> Total number of frames for a given direction x
      */
+
     vector<vector<int>> playerFrames { {0, 0, 0}, {1, 3, 3} };
     player.enableAnimation(playerFrames);
 
@@ -98,15 +120,15 @@ void gameDisplay::levelInit(const int& doorX, const int& doorY) {
     player.spriteClips.push_back(playerBackClip);
 
     // Initialize water textures
-    water.spriteSheet = new TextureWrap(renderer, "../titanic_eclipse/assets/water.png");
+    water.spriteSheet = new TextureWrap(renderer, waterTexPath);
 
     // Initialize door textures
-    door.spriteSheet = new TextureWrap(renderer, "../titanic_eclipse/assets/door.png");
+    door.spriteSheet = new TextureWrap(renderer, doorTexPath);
     SDL_Rect doorClip = {193, 384, 46, 95};
     door.spriteClips.push_back(doorClip);
 
     // Initialize platforms
-    platforms.spriteSheet = new TextureWrap(renderer, "../titanic_eclipse/assets/industrial.v1.png");
+    platforms.spriteSheet = new TextureWrap(renderer, platformsTexPath);
     SDL_Rect platform1 = {192, 0, 64, 19};
     platforms.spriteClips.push_back(platform1);
 }

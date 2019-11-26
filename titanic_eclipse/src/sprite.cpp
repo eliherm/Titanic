@@ -1,6 +1,14 @@
-#include <SDL2/SDL_image.h>
+#define WINDOWS   // Define the platform
+
 #include "sprite.h"
 #include "view.h"
+
+// Include the SDL image header based on the platform
+#ifdef WINDOWS
+    #include <SDL2/SDL_image.h>
+#else
+    #include <SDL_image.h>
+#endif
 
 sprite::sprite() { //initialize all variables
     this->xcoord = 0;
