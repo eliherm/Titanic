@@ -6,8 +6,8 @@
 #include "keyboardInput.h"
 #include "controller.h"
 
-const int HEIGHT = 720;
 const int WIDTH = 960;
+const int HEIGHT = 720;
 
 int main(int argc, char *argv[]) {
 	//main menu, initialization of objects, etc
@@ -22,7 +22,7 @@ Controller::Controller(int fps, int tps) {
 	this->t_time = CLOCKS_PER_SEC / tps;
 
 	try {
-        activeScreen = gameDisplay("titanic", HEIGHT, WIDTH);
+        activeScreen = gameDisplay("titanic", WIDTH, HEIGHT);
         activeScreen.levelInit(800, 50);
         keyboardIo = keyboardInput();
     } catch (SDLImgException& e) {
@@ -71,7 +71,7 @@ void Controller::run() {
 }
 
 //untested!! it's relatively simple so its unlikely to have errors, but should be tested once view and physics are on-board
-vector<object> Controller::getVisibleObjects(const int width, const int height) {//takes width and height of the window, returns an array of all objects within that window, centered on the player. with the player as the first object. in the future object should include an id of some sort that can be translated to a sprite
+vector<object> Controller::getVisibleObjects(const int& width, const int& height) {//takes width and height of the window, returns an array of all objects within that window, centered on the player. with the player as the first object. in the future object should include an id of some sort that can be translated to a sprite
 	vector<object> all = activeEngine.getState();
 	vector<object> visible;
 	int playerX = all.at(0).getXCoord() + all.at(0).getWidth()/2;
@@ -100,5 +100,5 @@ void Controller::doPhysics() {//to be implemented in the physics branch
 }
 
 void Controller::doFrame() {//to be implemented in the view branch
-	activeScreen.update(getVisibleObjects(HEIGHT, WIDTH), getKeyStates(), false, false, activeEngine.getState()[0].isGrounded());//will eventually include checks on victory or loss conditions
+	activeScreen.update(getVisibleObjects(WIDTH, HEIGHT), getKeyStates(), activeEngine.getState()[0].isGrounded(), false, false);//will eventually include checks on victory or loss conditions
 }

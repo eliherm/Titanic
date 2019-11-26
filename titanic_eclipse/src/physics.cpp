@@ -43,13 +43,8 @@ object::object(const double& xpos, const double& ypos, const int& width, const i
 	this->gravity = gravity;
 }
 
-double object::getXCoord() {
-	return xcoord;
-}
-
-double object::getYCoord() {
-	return ycoord;
-}
+double object::getXCoord() { return xcoord; }
+double object::getYCoord() { return ycoord; }
 
 void object::setCoord(const double& newx, const double& newy) {
 	xcoord = newx;
@@ -117,13 +112,13 @@ void object::setGrounded(const bool newval) {
 	grounded = newval;
 }
 
-physicsEngine::physicsEngine(){
+physicsEngine::physicsEngine() {
 	player = object(200, 200, 128, 240, PLAYERGRAVITY);
-	door = object(40, 80, 800, 50, 0);
-	water = object(0, 60, 960, 10, 0);
+	door = object(800, 50, 40, 80, 0);
+	water = object(0, 60, 960, 720 - 60, 0);
 	platforms = vector<object>();
-	platforms.push_back(object(200, 440, 64, 19, 0));
-    platforms.push_back(object(264, 440, 64, 19, 0));
+	platforms.emplace_back(object(200, 440, 64, 19, 0));
+    platforms.emplace_back(object(264, 440, 64, 19, 0));
 }
 
 physicsEngine::physicsEngine(object player, object door, object water, vector<object> platforms) {
@@ -263,7 +258,6 @@ double* physicsEngine::getMaxVector(object obj1, object obj2) {
 }
 
 vector<object> physicsEngine::getState() {
-
 	vector<object> tempVec {};
 
 	// add player -> door -> water
@@ -276,7 +270,5 @@ vector<object> physicsEngine::getState() {
 		tempVec.push_back (platforms[i]);
 	}
 
-
 	return tempVec;
-
 }

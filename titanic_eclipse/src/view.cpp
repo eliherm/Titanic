@@ -17,12 +17,13 @@ using namespace std;
 
 #define ANIMATION_DELAY 10  // Controls how fast frames are rendered in an animation cycle
 
-gameDisplay::gameDisplay(): WIDTH(0), HEIGHT(0), window(nullptr), renderer(nullptr) {}
-gameDisplay::gameDisplay(const string& windowName, const int& height, const int& width) {
+gameDisplay::gameDisplay(): WIDTH(0), HEIGHT(0), window(nullptr), renderer(nullptr), camera({0, 0, WIDTH, HEIGHT}) {}
+gameDisplay::gameDisplay(const string& windowName, const int& width, const int& height) {
     WIDTH = width;
     HEIGHT = height;
     window = nullptr;
     renderer = nullptr;
+    camera = {0, 0, WIDTH, HEIGHT};
 
     try {
         // Initialize SDL
@@ -67,7 +68,6 @@ gameDisplay::gameDisplay(const string& windowName, const int& height, const int&
 void gameDisplay::levelInit(const int& doorX, const int& doorY) {
 	// Setting player, water, and door dimensions
 	player.setDim(128, 240);
-	camera = {0, player.getYPos() , WIDTH, HEIGHT };
     water.setDim(WIDTH, HEIGHT);
     door.setDim(40, 80);
 
@@ -133,7 +133,7 @@ void gameDisplay::levelInit(const int& doorX, const int& doorY) {
     platforms.spriteClips.push_back(platform1);
 }
 
-void gameDisplay::update(vector<object> objects, vector<bool> keys, bool win, bool lose, bool grounded) {
+void gameDisplay::update(vector<object> objects, vector<bool> keys, bool grounded, bool win, bool lose) {
 	// Update objects
 	player.setPos(objects.at(0).getXCoord(), objects.at(0).getYCoord());
     water.setPos(0, objects.at(2).getYCoord());

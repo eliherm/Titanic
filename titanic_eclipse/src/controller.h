@@ -13,7 +13,7 @@ class Controller {
 public:
 	Controller(int fps, int tps);
 	void run();
-	vector<object> getVisibleObjects(const int, const int);
+	vector<object> getVisibleObjects(const int&, const int&);
 	vector<bool> getKeyStates();
 	void getGraphicData();
 	bool running;
