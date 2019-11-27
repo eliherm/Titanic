@@ -171,7 +171,7 @@ void gameDisplay::update(vector<object> objects, vector<bool> keys, bool grounde
         if (player.frames[0][1] / ANIMATION_DELAY >= player.frames[1][1])
             player.frames[0][1] = 0;
     } else if (keys[2] && !keys[3] && !grounded) { //left and in the air
-    	player.spriteSheet->render(player.getXPos(), player.getYPos() - camera.y, &(player.spriteClips.at(7)));
+    	player.spriteSheet->render(player.getXPos(), player.getYPos() - camera.y, &(player.spriteClips.at(7))); //make this the sprite for jumping left
     }
 
     //RIGHT
@@ -189,7 +189,7 @@ void gameDisplay::update(vector<object> objects, vector<bool> keys, bool grounde
         if (player.frames[0][2] / ANIMATION_DELAY >= player.frames[1][2])
             player.frames[0][2] = 0;
     } else if (keys[3] && !keys[2] && !grounded){ //Right and in the air
-    	player.spriteSheet->render(player.getXPos(), player.getYPos() - camera.y, &(player.spriteClips.at(7)));
+    	player.spriteSheet->render(player.getXPos(), player.getYPos() - camera.y, &(player.spriteClips.at(7))); //make this the sprite for jumping right
     }
     //STANDING STILL
     else {
