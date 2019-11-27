@@ -155,7 +155,9 @@ void gameDisplay::update(vector<object> objects, vector<bool> keys, bool grounde
 	}
 
     // Render player with animation
-    if (keys[2] && !keys[3] && grounded) { // Left
+
+	//LEFT
+    if (keys[2] && !keys[3] && grounded) { // Left and on the ground
         // Reset frame information for other directions
         for (auto i : player.frames[0])
             if (i != 1) i = 0;
@@ -168,7 +170,12 @@ void gameDisplay::update(vector<object> objects, vector<bool> keys, bool grounde
         player.frames[0][1]++;
         if (player.frames[0][1] / ANIMATION_DELAY >= player.frames[1][1])
             player.frames[0][1] = 0;
-    } else if (keys[3] && !keys[2] && grounded) { // Right
+    } else if (keys[2] && !keys[3] && !grounded) { //left and in the air
+    	player.spriteSheet->render(player.getXPos(), player.getYPos() - camera.y, &(player.spriteClips.at(7)));
+    }
+
+    //RIGHT
+	else if (keys[3] && !keys[2] && grounded) { // Right and on the ground
         // Reset frame information for other directions
         for (auto i : player.frames[0])
             if (i != 2) i = 0;
@@ -181,7 +188,11 @@ void gameDisplay::update(vector<object> objects, vector<bool> keys, bool grounde
         player.frames[0][2]++;
         if (player.frames[0][2] / ANIMATION_DELAY >= player.frames[1][2])
             player.frames[0][2] = 0;
-    } else {
+    } else if (keys[3] && !keys[2] && !grounded){ //Right and in the air
+    	player.spriteSheet->render(player.getXPos(), player.getYPos() - camera.y, &(player.spriteClips.at(7)));
+    }
+    //STANDING STILL
+    else {
          player.spriteSheet->render(player.getXPos(), player.getYPos() - camera.y, &(player.spriteClips.at(0)));
     }
 
