@@ -123,7 +123,7 @@ physicsEngine::physicsEngine(){
 	door = object(400, 50, 40, 80, 0);
 	water = object(0, 60, 960, 10, 0);
 	platforms = vector<object>();
-	platforms.push_back(object(0, 200, 300, 10, 0));
+	platforms.push_back(object(0, 200, 300, 10, 0)); //push back more platorms for complete level (may read this in from a text file
 }
 
 physicsEngine::physicsEngine(object player, object door, object water, vector<object> platforms) {
@@ -134,11 +134,11 @@ physicsEngine::physicsEngine(object player, object door, object water, vector<ob
 }
 
 bool physicsEngine::isCompleted(){
-	return completed;
+	return completed;				//Have we reached the door
 }
 
 bool physicsEngine::isFailed(){
-	return failed;
+	return failed;					//Did we hit the water
 }
 
 void physicsEngine::updateObjects(const vector<bool> &keypresses) {
@@ -213,9 +213,9 @@ void physicsEngine::updateObjects(const vector<bool> &keypresses) {
 
 	//check door and water for win/loss
 	if(checkIntersection(player, door)){
-		completed = true;
+		completed = true;							//Win Condition
 	}else if(checkIntersection(player, water)){
-		failed = true;
+		failed = true;								//Lose Condition
 	}
 }
 
@@ -280,15 +280,14 @@ vector<object> physicsEngine::getState() {
 	vector<object> tempVec {};
 
 	// add player -> door -> water
-	tempVec.push_back (player);
-	tempVec.push_back (door);
-	tempVec.push_back (water);
+	tempVec.push_back (player); 	//index 0 in vector
+	tempVec.push_back (door);		//index 1 in vector
+	tempVec.push_back (water);		//index 2 in vector
 
 	// fill tempVec with lots of data - iterate through platform vector and add to temp vec
 	for(int i=0; i < platforms.size(); i++){
-		tempVec.push_back (platforms[i]);
+		tempVec.push_back (platforms[i]); //index 2+i in vector
 	}
-
 
 	return tempVec;
 
