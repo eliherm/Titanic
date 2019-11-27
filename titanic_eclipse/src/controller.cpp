@@ -58,6 +58,8 @@ void Controller::run() {
 			t -= t_time;//if we run into issues or I have extra time we can use modulo here, but will need to have a system to track lost ticks and pass that info along to be dealt with properly
 			doPhysics();
 		}
+
+		//will eventually load new level if one is finished
 	}
 }
 
@@ -91,5 +93,5 @@ void Controller::doPhysics() {//to be implemented in the physics branch
 }
 
 void Controller::doFrame() {//to be implemented in the view branch
-	activeScreen.update(getVisibleObjects(HEIGHT, WIDTH), false, false);//will eventually include checks on victory or loss conditions
+	activeScreen.update(getVisibleObjects(HEIGHT, WIDTH), activeEngine.isCompleted(), activeEngine.isFailed());
 }

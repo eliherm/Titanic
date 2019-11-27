@@ -31,6 +31,7 @@ object::object(const object& newval) {
 	width = newval.width;
 	height = newval.height;
 	gravity = newval.gravity;
+	grounded = newval.grounded;
 }
 
 object::object(const double& xpos, const double& ypos, const int& width, const int& height, const double& gravity) {
@@ -132,6 +133,14 @@ physicsEngine::physicsEngine(object player, object door, object water, vector<ob
 	this->platforms = platforms;
 }
 
+bool physicsEngine::isCompleted(){
+	return completed;
+}
+
+bool physicsEngine::isFailed(){
+	return failed;
+}
+
 void physicsEngine::updateObjects(const vector<bool> &keypresses) {
 	if(keypresses[0]){//up
 		if(player.isGrounded()){//simply checks if on the ground for basic jumps. may eventually include collision checks with wall etc for other functionality
@@ -203,6 +212,11 @@ void physicsEngine::updateObjects(const vector<bool> &keypresses) {
 	delete[] movement;
 
 	//check door and water for win/loss
+	if(checkIntersection(player, door)){
+		completed = true;
+	}else if(checkIntersection(player, water)){
+		failed = true;
+	}
 }
 
 bool physicsEngine::checkIntersection(object obj1, object obj2) {
