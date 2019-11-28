@@ -16,7 +16,7 @@ public:
 	vector<object> getVisibleObjects(const int, const int);
 	vector<bool> getKeyStates();
 	void getGraphicData();
-	bool running;
+	bool running = false;
 
     physicsEngine activeEngine; // will not always be the only reference to an engine, simply to denote which engine is action in the event we have two at once
     gameDisplay activeScreen;
