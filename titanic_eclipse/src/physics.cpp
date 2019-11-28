@@ -115,12 +115,15 @@ void object::setGrounded(const bool newval) {
 physicsEngine::physicsEngine() {
 	player = object(200, 195, 128, 240, PLAYERGRAVITY);
 	door = object(800, 50, 40, 80, 0);
-	water = object(0, 60, 960, 720 - 60, 0);
+	water = object(0, 700, 960, 720 - 60, 0);
 	platforms = vector<object>();
 	platforms.emplace_back(object(500, 20, 64, 19, 0));
 	platforms.emplace_back(object(200, 440, 64, 19, 0));
     platforms.emplace_back(object(264, 440, 64, 19, 0));
     //platforms.emplace_back(object(328, 500, 64, 19, 0));
+
+    win = false;
+    lose = false;
 }
 
 physicsEngine::physicsEngine(object player, object door, object water, vector<object> platforms) {
@@ -128,6 +131,9 @@ physicsEngine::physicsEngine(object player, object door, object water, vector<ob
 	this->door = door;
 	this->water = water;
 	this->platforms = platforms;
+
+	win = false;
+	lose = false;
 }
 
 void physicsEngine::updateObjects(const vector<bool> &keypresses) {
@@ -209,6 +215,13 @@ void physicsEngine::updateObjects(const vector<bool> &keypresses) {
 	delete[] movement;
 
 	//check door and water for win/loss
+	if(checkIntersection(player, water)) {
+		this->lose = true;
+	}
+
+	if(checkIntersection(player, door)) {
+		this->win = true;
+	}
 }
 
 bool physicsEngine::checkIntersection(object obj1, object obj2) {
@@ -281,4 +294,12 @@ vector<object> physicsEngine::getState() {
 	}
 
 	return tempVec;
+}
+
+bool physicsEngine::getWinState() {
+	return this->win;
+}
+
+bool physicsEngine::getLoseState() {
+	return this->lose;
 }

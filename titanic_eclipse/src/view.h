@@ -11,7 +11,7 @@
 #include "sprite.h"
 using namespace std;
 
-enum menuStateType { start, pause, win, lose };
+enum menuStateType { start, pause, win, lose, quit };
 
 class gameDisplay {
 public:
@@ -21,6 +21,7 @@ public:
     void update(vector<object> objects, vector<bool> keys, bool grounded, bool win, bool lose);    // Updates all objects
     void close();                                                                   // Free up resources
     void setMenu(const menuStateType& menu);
+    menuStateType getMenu();
     bool updateMenu(vector<bool> keys);
 private:
     // Main window
@@ -35,6 +36,10 @@ private:
     sprite water;
 	sprite door;
 	sprite platforms;
+	sprite losemenu;
+	sprite pausemenu;
+	sprite startmenu;
+	sprite winmenu;
 
     SDL_Rect camera;  // Rectangle to track player movement in the level
 

@@ -24,6 +24,7 @@ public:
 private:
 	int f_time;
 	int t_time;
+	bool inmenu;
 
 	void doPhysics();
 	void doFrame();

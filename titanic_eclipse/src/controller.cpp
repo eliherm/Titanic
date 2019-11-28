@@ -1,6 +1,7 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <time.h>
+#include <vector>
 #include "view.h"
 #include "physics.h"
 #include "keyboardInput.h"
@@ -21,9 +22,12 @@ Controller::Controller(int fps, int tps) {
 	this->f_time = CLOCKS_PER_SEC / fps;
 	this->t_time = CLOCKS_PER_SEC / tps;
 
+	this->inmenu = true;
+
 	try {
         activeScreen = gameDisplay("titanic", WIDTH, HEIGHT);
-        activeScreen.levelInit(800, 50);
+        activeScreen.setMenu(start);
+       // activeScreen.levelInit(800, 50);
         keyboardIo = keyboardInput();
     } catch (SDLImgException& e) {
         cerr << e.what() << endl;
@@ -39,6 +43,7 @@ void Controller::run() {
 	int new_time = 0;
 	int f = 0;
 	int t = 0;
+	int tcnt = 0;
 
 	running = true;
 	while (running) {//running is a public variable, so can be switched to false whenever needed
@@ -65,7 +70,45 @@ void Controller::run() {
 		}
 		if(t >= t_time){
 			t -= t_time;//if we run into issues or I have extra time we can use modulo here, but will need to have a system to track lost ticks and pass that info along to be dealt with properly
-			doPhysics();
+			tcnt += 1;
+
+			if(!inmenu) {
+				if(activeEngine.getWinState()) {
+					activeScreen.setMenu(win);
+					inmenu = true;
+				} else if(activeEngine.getLoseState()){
+					activeScreen.setMenu(lose);
+					inmenu = true;
+				} else if(getKeyStates()[5]) {
+					activeScreen.setMenu(pause);
+					inmenu = true;
+				} else {
+					doPhysics();
+				}
+			} else if(tcnt > 4){
+				if(!activeScreen.updateMenu(getKeyStates()) && !(activeScreen.getMenu() == quit)) {
+					inmenu = false;
+
+					if(activeScreen.getMenu() == start) {
+						//load level 1
+						object player;
+						player = object(280, 195 , 128, 240, 0.5);
+						object door = object(200, 50, 40, 80, 0);
+						object water = object(0, 700, 960, 720 - 60, 0);
+						vector<object> platforms;
+						platforms = vector<object>();
+						platforms.push_back(object(500, 20, 64, 19, 0));
+						platforms.push_back(object(200, 440, 64, 19, 0));
+						platforms.push_back(object(264, 440, 64, 19, 0));
+
+						activeEngine = physicsEngine(player, door, water, platforms);
+						activeScreen.levelInit(200, 50);
+					}
+				} else if(activeScreen.getMenu() == quit) {
+					running = false;
+				}
+				tcnt = 0;
+			}
 		}
 	}
 }
@@ -100,5 +143,11 @@ void Controller::doPhysics() {//to be implemented in the physics branch
 }
 
 void Controller::doFrame() {//to be implemented in the view branch
-	activeScreen.update(getVisibleObjects(WIDTH, HEIGHT), getKeyStates(), activeEngine.getState()[0].isGrounded(), false, false);//will eventually include checks on victory or loss conditions
+	if(!inmenu) {
+		activeScreen.update(getVisibleObjects(WIDTH, HEIGHT), getKeyStates(), activeEngine.getState()[0].isGrounded(), false, false);//will eventually include checks on victory or loss conditions
+	}/* else {
+		if(!activeScreen.updateMenu(getKeyStates())) {
+			inmenu = false;
+		}
+	}*/
 }
