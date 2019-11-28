@@ -43,6 +43,8 @@ void Controller::run() {
 	running = true;
 	while (running) {//running is a public variable, so can be switched to false whenever needed
 
+		//cout << activeEngine.checkIntersection(activeEngine.getState()[0], activeEngine.getState()[2]) << endl;
+		cout << activeEngine.getState()[0].isGrounded() << endl;
 	    SDL_Event e;
         while (SDL_PollEvent( &e ) != 0) {
             // User requests quit

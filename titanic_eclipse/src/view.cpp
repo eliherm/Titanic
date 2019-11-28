@@ -6,7 +6,6 @@
 #include <vector>
 #include "view.h"
 #include <iostream>
-
 // Include the SDL image header based on the platform
 #ifdef WINDOWS
     #include <SDL2/SDL_image.h>

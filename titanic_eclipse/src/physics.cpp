@@ -132,8 +132,8 @@ physicsEngine::physicsEngine(){
 	water = object(0, 600, 960, 10, 0);
 	platforms = vector<object>();
 	platforms.push_back(object(300, 200, 300, 10, 0));
-	platforms.push_back(object(200, 300, 300, 10, 0));
-//	platforms.push_back(object(200, 600, 300, 10, 0));
+	platforms.push_back(object(100, 500, 300, 10, 0));
+	platforms.push_back(object(400, 1000, 300, 10, 0));
 //	platforms.push_back(object(650, 250, 300, 10, 0));
 //	platforms.push_back(object(750, 200, 100, 10, 0));
 }
@@ -212,7 +212,7 @@ void physicsEngine::updateObjects(const vector<bool> &keypresses) {
 			player.setYSpeed(0);
 			player.setGrounded(true);//only ground on floor hit, not ceiling hit
 		}else{
-			player.setGrounded(false);
+			//player.setGrounded(false);
 		}
 		if(temp[1] > movement[1] && movement[1] < 0){//hit a ceiling
 			movement[1] = temp[1];
