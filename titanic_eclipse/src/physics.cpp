@@ -118,6 +118,14 @@ void object::setGrounded(const bool newval) {
 	grounded = newval;
 }
 
+bool physicsEngine::isCompleted(){
+	return completed;				//Will only be changed to true when the door is reached; used to check if we have won
+}
+
+bool physicsEngine::isFailed(){
+	return failed;					//Will be changed whenever we hit the water; used to check if we have lost
+}
+
 physicsEngine::physicsEngine(){
 	player = object(200, 40, 40, 80, PLAYERGRAVITY);
 	door = object(770, 20, 40, 80, 0);
@@ -136,18 +144,11 @@ physicsEngine::physicsEngine(object player, object door, object water, vector<ob
 	this->platforms = platforms;
 }
 
-bool physicsEngine::isCompleted(){
-	return completed;
-}
-
-bool physicsEngine::isFailed(){
-	return failed;
-}
 
 void physicsEngine::updateObjects(const vector<bool> &keypresses) {
 	if(keypresses[0]){//up
 		if(player.isGrounded()){//simply checks if on the ground for basic jumps. may eventually include collision checks with wall etc for other functionality
-			player.setGrounded(false);
+			player.setGrounded(false); //change to the state of the character
 			player.setYSpeed(-JUMPSPEED);//jump, initial bump in upward velocity
 		}else{
 			//maintain jump. will allow better height if held, will probably not apply if the player is already moving down, or nearing the top of the jump, as this makes things feel floaty
@@ -159,7 +160,7 @@ void physicsEngine::updateObjects(const vector<bool> &keypresses) {
 	}
 	if(keypresses[4]){//space, separate from up in case we implement ladders or such
 		if(player.isGrounded()){//simply checks if on the ground for basic jumps. may eventually include collision checks with wall etc for other functionality
-			player.setGrounded(false);
+			player.setGrounded(false); //change to the state of the character
 			player.setYSpeed(-JUMPSPEED);//jump, initial bump in upward velocity
 		}else{
 			//maintain jump. will allow better height if held, will probably not apply if the player is already moving down, or nearing the top of the jump, as this makes things feel floaty
@@ -223,9 +224,9 @@ void physicsEngine::updateObjects(const vector<bool> &keypresses) {
 
 	//check door and water for win/loss
 	if(checkIntersection(player, door)){
-		completed = true;
+		completed = true;							//Win Condition
 	}else if(checkIntersection(player, water)){
-		failed = true;
+		failed = true;								//Lose Condition
 	}
 }
 
@@ -297,15 +298,14 @@ vector<object> physicsEngine::getState() {
 	vector<object> tempVec {};
 
 	// add player -> door -> water
-	tempVec.push_back (player);
-	tempVec.push_back (door);
-	tempVec.push_back (water);
+	tempVec.push_back (player); 	//index 0 in vector
+	tempVec.push_back (door);		//index 1 in vector
+	tempVec.push_back (water);		//index 2 in vector
 
 	// fill tempVec with lots of data - iterate through platform vector and add to temp vec
 	for(int i=0; i < platforms.size(); i++){
-		tempVec.push_back (platforms[i]);
+		tempVec.push_back (platforms[i]); //index 2+i in vector
 	}
-
 
 	return tempVec;
 
