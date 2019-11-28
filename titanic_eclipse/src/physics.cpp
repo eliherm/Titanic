@@ -127,13 +127,14 @@ bool physicsEngine::isFailed(){
 }
 
 physicsEngine::physicsEngine(){
-	player = object(400, -100, 128, 240, PLAYERGRAVITY);
-	door = object(770, 20, 40, 80, 0);
+	player = object(400, -300, 128, 240, PLAYERGRAVITY);
+	door = object(770, 10, 40, 80, 0);
 	water = object(0, 600, 960, 10, 0);
 	platforms = vector<object>();
 	platforms.push_back(object(300, 200, 300, 10, 0));
-//	platforms.push_back(object(200, 300, 300, 10, 0));
-//	platforms.push_back(object(650, 250, 100, 10, 0));
+	platforms.push_back(object(200, 300, 300, 10, 0));
+//	platforms.push_back(object(200, 600, 300, 10, 0));
+//	platforms.push_back(object(650, 250, 300, 10, 0));
 //	platforms.push_back(object(750, 200, 100, 10, 0));
 }
 

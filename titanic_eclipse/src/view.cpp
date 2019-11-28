@@ -1,4 +1,4 @@
-//#define WINDOWS   // Define the platform
+#define WINDOWS   // Define the platform
 
 #include <SDL2/SDL.h>
 #include <iostream>

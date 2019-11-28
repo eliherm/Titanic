@@ -23,7 +23,7 @@ Controller::Controller(int fps, int tps) {
 
 	try {
         activeScreen = gameDisplay("titanic", WIDTH, HEIGHT);
-        activeScreen.levelInit(800, 50);
+        activeScreen.levelInit(770, 10);
         keyboardIo = keyboardInput();
     } catch (SDLImgException& e) {
         cerr << e.what() << endl;
@@ -72,7 +72,6 @@ void Controller::run() {
 	}
 }
 
-//untested!! it's relatively simple so its unlikely to have errors, but should be tested once view and physics are on-board
 vector<object> Controller::getVisibleObjects(const int width, const int height) {//takes width and height of the window, returns an array of all objects within that window, centered on the player. with the player as the first object. in the future object should include an id of some sort that can be translated to a sprite
 	vector<object> all = activeEngine.getState();
 	vector<object> visible;
