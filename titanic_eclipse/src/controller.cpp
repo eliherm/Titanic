@@ -1,11 +1,13 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <time.h>
+#include <vector>
 #include "view.h"
 #include "physics.h"
 #include "keyboardInput.h"
 #include "controller.h"
 
+//#define WINDOWS   // Define the platform
 const int WIDTH = 960;
 const int HEIGHT = 720;
 
@@ -21,9 +23,11 @@ Controller::Controller(int fps, int tps) {
 	this->f_time = CLOCKS_PER_SEC / fps;
 	this->t_time = CLOCKS_PER_SEC / tps;
 
+	this->inmenu = true;
+
 	try {
         activeScreen = gameDisplay("titanic", WIDTH, HEIGHT);
-        activeScreen.levelInit(770, 10);
+        activeScreen.setMenu(start);
         keyboardIo = keyboardInput();
     } catch (SDLImgException& e) {
         cerr << e.what() << endl;
@@ -39,18 +43,19 @@ void Controller::run() {
 	int new_time = 0;
 	int f = 0;
 	int t = 0;
+	int tcnt = 0;
 
 	running = true;
 	while (running) {//running is a public variable, so can be switched to false whenever needed
+
 	    SDL_Event e;
-        while (SDL_PollEvent( &e ) != 0) {
+        while (SDL_PollEvent(&e) != 0) {
             // User requests quit
             if( e.type == SDL_QUIT ) {
                 running =  false;
             }
         }
 
-	    //cout << f << " : " << t << endl;
 		//checkKeys();//some keys (such as whatever we choose to be quit) may operate outside of regular frames or ticks, so it will be checked every loop
 		new_time = clock();
 		if(new_time > prev_time){//as far as I understand clock can wrap around, I'm not sure what the max value is yet. this code will miss a loop whenever it wraps, I might fix it at some point but the impact is minor
@@ -64,14 +69,51 @@ void Controller::run() {
 		}
 		if(t >= t_time){
 			t -= t_time;//if we run into issues or I have extra time we can use modulo here, but will need to have a system to track lost ticks and pass that info along to be dealt with properly
-			doPhysics();
-		}
+			tcnt += 1;
 
+			if(!inmenu) {
+				if(activeEngine.getWinState()) {
+					activeScreen.setMenu(win);
+					inmenu = true;
+				} else if(activeEngine.getLoseState()){
+					activeScreen.setMenu(lose);
+					inmenu = true;
+				} else if(getKeyStates()[5]) {
+					activeScreen.setMenu(pause);
+					inmenu = true;
+				} else {
+					doPhysics();
+				}
+			} else if(tcnt > 4){
+				if(!activeScreen.updateMenu(getKeyStates()) && !(activeScreen.getMenu() == quit)) {
+					inmenu = false;
+
+					if(activeScreen.getMenu() == start) {
+						//load level 1
+						object player;
+						player = object(280, 195 , 128, 240, 0.5);
+						object door = object(700, 50, 40, 80, 0);
+						object water = object(0, 700, 960, 720 - 60, 0);
+						vector<object> platforms;
+						platforms = vector<object>();
+						platforms.push_back(object(500, 20, 300, 10, 0));
+						platforms.push_back(object(200, 440, 300, 10, 0));
+						platforms.push_back(object(264, 440, 300, 10, 0));
+
+						activeEngine = physicsEngine(player, door, water, platforms);
+					}
+				} else if(activeScreen.getMenu() == quit) {
+					running = false;
+				}
+				tcnt = 0;
+			}
+		}
 		//will eventually load new level if one is finished
 	}
 }
 
-vector<object> Controller::getVisibleObjects(const int width, const int height) {//takes width and height of the window, returns an array of all objects within that window, centered on the player. with the player as the first object. in the future object should include an id of some sort that can be translated to a sprite
+//untested!! it's relatively simple so its unlikely to have errors, but should be tested once view and physics are on-board
+vector<object> Controller::getVisibleObjects(const int& width, const int& height) {//takes width and height of the window, returns an array of all objects within that window, centered on the player. with the player as the first object. in the future object should include an id of some sort that can be translated to a sprite
 	vector<object> all = activeEngine.getState();
 	vector<object> visible;
 	int playerX = all.at(0).getXCoord() + all.at(0).getWidth()/2;
@@ -100,5 +142,11 @@ void Controller::doPhysics() {//to be implemented in the physics branch
 }
 
 void Controller::doFrame() {//to be implemented in the view branch
-	activeScreen.update(getVisibleObjects(WIDTH, HEIGHT), getKeyStates(), activeEngine.getState()[0].isGrounded(), activeEngine.isCompleted(), activeEngine.isFailed());//will eventually include checks on victory or loss conditions
+	if(!inmenu) {
+		activeScreen.update(getVisibleObjects(WIDTH, HEIGHT), getKeyStates(), activeEngine.getState()[0].isGrounded());//will eventually include checks on victory or loss conditions
+	}/* else {
+		if(!activeScreen.updateMenu(getKeyStates())) {
+			inmenu = false;
+		}
+	}*/
 }

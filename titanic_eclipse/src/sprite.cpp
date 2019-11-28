@@ -1,5 +1,3 @@
-//#define WINDOWS   // Define the platform
-
 #include "sprite.h"
 #include "view.h"
 

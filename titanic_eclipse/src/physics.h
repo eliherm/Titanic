@@ -51,13 +51,18 @@ public:
     vector<object> getState();
     bool checkIntersection(object obj1, object obj2);
     double* getMaxVector(object obj1, object obj2);
-    bool isCompleted();
-    bool isFailed();
+    bool getWinState();
+    bool getLoseState();
+//    bool isCompleted();
+//    bool isFailed();
 private:
-    bool completed = false;
-    bool failed = false;
+//    bool completed = false;
+//    bool failed = false;
     object player;
     object door;
     object water;
     vector<object> platforms;
+
+    bool win;
+    bool lose;
 };

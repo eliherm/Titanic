@@ -44,13 +44,8 @@ object::object(const double& xpos, const double& ypos, const int& width, const i
 	this->gravity = gravity;
 }
 
-double object::getXCoord() {
-	return xcoord;
-}
-
-double object::getYCoord() {
-	return ycoord;
-}
+double object::getXCoord() { return xcoord; }
+double object::getYCoord() { return ycoord; }
 
 void object::setCoord(const double& newx, const double& newy) {
 	xcoord = newx;
@@ -118,45 +113,27 @@ void object::setGrounded(const bool newval) {
 	grounded = newval;
 }
 
-bool physicsEngine::isCompleted(){
-	return completed;				//Will only be changed to true when the door is reached; used to check if we have won
-}
-
-bool physicsEngine::isFailed(){
-	return failed;					//Will be changed whenever we hit the water; used to check if we have lost
-}
-
-physicsEngine::physicsEngine(){
-	player = object(400, -300, 128, 240, PLAYERGRAVITY);
-	door = object(770, 10, 40, 80, 0);
-	water = object(0, 600, 960, 10, 0);
-	platforms = vector<object>();
-	platforms.push_back(object(300, 200, 300, 10, 0));
-	platforms.push_back(object(100, 500, 300, 10, 0));
-	platforms.push_back(object(400, 1000, 300, 10, 0));
-//	platforms.push_back(object(650, 250, 300, 10, 0));
-//	platforms.push_back(object(750, 200, 100, 10, 0));
-}
-
+physicsEngine::physicsEngine(): win(false), lose(false) {}
 physicsEngine::physicsEngine(object player, object door, object water, vector<object> platforms) {
 	this->player = player;
 	this->door = door;
 	this->water = water;
 	this->platforms = platforms;
-}
 
+	win = false;
+	lose = false;
+}
 
 void physicsEngine::updateObjects(const vector<bool> &keypresses) {
 	if(keypresses[0]){//up
 		if(player.isGrounded()){//simply checks if on the ground for basic jumps. may eventually include collision checks with wall etc for other functionality
 			player.setGrounded(false); //change to the state of the character
 			player.setYSpeed(-JUMPSPEED);//jump, initial bump in upward velocity
-		}else{
+		} else {
 			//maintain jump. will allow better height if held, will probably not apply if the player is already moving down, or nearing the top of the jump, as this makes things feel floaty
 			if(player.getYSpeed() <= -(JUMPSPEED/10)){
 				player.addYSpeed(-PLAYERGRAVITY/2);
 			}
-
 		}
 	}
 	if(keypresses[4]){//space, separate from up in case we implement ladders or such
@@ -195,6 +172,7 @@ void physicsEngine::updateObjects(const vector<bool> &keypresses) {
 
 	//apply gravity to relevant objects (currently only player)
 	player.addYSpeed(PLAYERGRAVITY);
+	bool resetgrav = false;
 
 	//check collisions between relevant objects (currently only player) and all objects. if others are implemented, will be placed in a loop iterating through the list
 	double* movement = new double[2];
@@ -202,32 +180,34 @@ void physicsEngine::updateObjects(const vector<bool> &keypresses) {
 	movement[1] = player.getYSpeed();
 	for(int i = 0; i < platforms.size(); i++){
 		double* temp = getMaxVector(player, platforms.at(i));
-		//printf("%d : %f %f %f %f\n", i, temp[0], temp[1], movement[0], movement[1]);
 		if(abs(temp[0]) < abs(movement[0])){//hit a wall, x vector is closer to 0
 			movement[0] = temp[0];
 			player.setXSpeed(0);
 		}
 		if(temp[1] < movement[1] && movement[1] > 0){//hit a floor
 			movement[1] = temp[1];
-			player.setYSpeed(0);
+            player.setYSpeed(0);
+			resetgrav = true;
 			player.setGrounded(true);//only ground on floor hit, not ceiling hit
-		}else{
-			//player.setGrounded(false);
-		}
-		if(temp[1] > movement[1] && movement[1] < 0){//hit a ceiling
+		}else if(temp[1] > movement[1] && movement[1] < 0){//hit a ceiling
 			movement[1] = temp[1];
 			player.setYSpeed(0);
 		}
+
+		delete[] temp;
 	}
 	//if no collisions, move object (before checking the next object), else compute collision behavior
-	player.addCoord(movement[0], movement[1]);
+	if(resetgrav)
+        player.setYSpeed(0); //reset gravity on collision with platform
+
+    player.addCoord(movement[0], movement[1]);
 	delete[] movement;
 
 	//check door and water for win/loss
 	if(checkIntersection(player, door)){
-		completed = true;							//Win Condition
+        this->win = true;   //Win Condition
 	}else if(checkIntersection(player, water)){
-		failed = true;								//Lose Condition
+        this->lose = true;	//Lose Condition
 	}
 }
 
@@ -295,7 +275,6 @@ double* physicsEngine::getMaxVector(object obj1, object obj2) {
 }
 
 vector<object> physicsEngine::getState() {
-
 	vector<object> tempVec {};
 
 	// add player -> door -> water
@@ -309,5 +288,12 @@ vector<object> physicsEngine::getState() {
 	}
 
 	return tempVec;
+}
 
+bool physicsEngine::getWinState() {
+	return this->win;
+}
+
+bool physicsEngine::getLoseState() {
+	return this->lose;
 }

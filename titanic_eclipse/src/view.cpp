@@ -1,11 +1,10 @@
-//#define WINDOWS   // Define the platform
-
 #include <SDL2/SDL.h>
 #include <iostream>
 #include <utility>
 #include <vector>
 #include "view.h"
 #include <iostream>
+
 // Include the SDL image header based on the platform
 #ifdef WINDOWS
     #include <SDL2/SDL_image.h>
@@ -16,30 +15,34 @@ using namespace std;
 
 #define ANIMATION_DELAY 10  // Controls how fast frames are rendered in an animation cycle
 
-gameDisplay::gameDisplay(): WIDTH(0), HEIGHT(0), window(nullptr), renderer(nullptr), camera({0, 0, WIDTH, HEIGHT}) {}
+gameDisplay::gameDisplay(): WIDTH(0), HEIGHT(0), window(nullptr),
+		renderer(nullptr), camera({0, 0, WIDTH, HEIGHT}), menuState(start), optionSelected(0) {}
+
 gameDisplay::gameDisplay(const string& windowName, const int& width, const int& height) {
     WIDTH = width;
     HEIGHT = height;
     window = nullptr;
     renderer = nullptr;
     camera = {0, 0, WIDTH, HEIGHT};
+    menuState = start;
+    optionSelected = 0;
 
     try {
-        // Initialize SDL
-        if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-            throw SDLException("SDL could not initialize!");
-        }
+    	// Initialize SDL
+    	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+    		throw SDLException("SDL could not initialize!");
+    	}
 
-        // Set texture filtering to linear
-        if(!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1")) {
-            cerr << "Warning: Linear texture filtering not enabled!" << endl;
-        }
+    	// Set texture filtering to linear
+    	if(!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1")) {
+    		cerr << "Warning: Linear texture filtering not enabled!" << endl;
+    	}
 
-        // Create a window
-        window = SDL_CreateWindow(windowName.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN); // NOLINT(hicpp-signed-bitwise)
-        if (window == nullptr) {
-            throw SDLException("The main window could not be created!");
-        }
+    	// Create a window
+    	window = SDL_CreateWindow(windowName.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN); // NOLINT(hicpp-signed-bitwise)
+    	if (window == nullptr) {
+    		throw SDLException("The main window could not be created!");
+    	}
 
         // Create renderer for the window
         renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
@@ -50,11 +53,13 @@ gameDisplay::gameDisplay(const string& windowName, const int& width, const int& 
         // Initialize renderer colour
         SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
 
-        // Initialize PNG loading
-        int imgFlags = IMG_INIT_PNG | IMG_INIT_JPG;
-        if (!(IMG_Init(imgFlags) & imgFlags)) { // NOLINT(hicpp-signed-bitwise)
-            throw SDLImgException("SDL_image could not be initialized!");
-        }
+    	// Initialize PNG loading
+    	int imgFlags = IMG_INIT_PNG | IMG_INIT_JPG;
+    	if (!(IMG_Init(imgFlags) & imgFlags)) { // NOLINT(hicpp-signed-bitwise)
+    		throw SDLImgException("SDL_image could not be initialized!");
+    	}
+
+    	initTextures();
     } catch (SDLImgException& e) {
         cerr << e.what() << endl;
         exit(1);
@@ -64,27 +69,32 @@ gameDisplay::gameDisplay(const string& windowName, const int& width, const int& 
     }
 }
 
-void gameDisplay::levelInit(const int& doorX, const int& doorY) {
-	// Setting player, water, and door dimensions
-	player.setDim(128, 240);
-    water.setDim(WIDTH, HEIGHT);
-    door.setDim(40, 80);
-
-	// Setting door position
-	door.setPos(doorX, doorY);
-
-	// Initialize the paths to textures
+void gameDisplay::initTextures() {
+    // Initialize the paths to textures
 #ifdef WINDOWS
     string playerTexPath = "..\\titanic\\titanic_eclipse\\assets\\player.png";
-    string waterTexPath = "..\\titanic\\titanic_eclipse\\assets\\water.png";
-    string doorTexPath = "..\\titanic\\titanic_eclipse\\assets\\door.png";
-    string platformsTexPath = "..\\titanic\\titanic_eclipse\\assets\\platform.png";
+    	string waterTexPath = "..\\titanic\\titanic_eclipse\\assets\\water.png";
+    	string doorTexPath = "..\\titanic\\titanic_eclipse\\assets\\door.png";
+    	string platformsTexPath = "..\\titanic\\titanic_eclipse\\assets\\platform.png";
+    	string loseMenuImg = "..\\titanic\\titanic_eclipse\\assets\\menus\\lose-menu.png";
+    	string pauseMenuImg = "..\\titanic_eclipse\\assets\\menus\\pause-menu.png";
+    	string startMenuImg = "..\\titanic_eclipse\\assets\\menus\\start-menu.png";
+    	string winMenuImg = "..\\titanic_eclipse\\assets\\menus\\win-menu.png";
 #else
     string playerTexPath = "../titanic_eclipse/assets/player.png";
     string waterTexPath = "../titanic_eclipse/assets/water.png";
     string doorTexPath = "../titanic_eclipse/assets/door.png";
     string platformsTexPath = "../titanic_eclipse/assets/platform.png";
+    string loseMenuImg = "../titanic_eclipse/assets/menus/lose-menu.png";
+    string pauseMenuImg = "../titanic_eclipse/assets/menus/pause-menu.png";
+    string startMenuImg = "../titanic_eclipse/assets/menus/start-menu.png";
+    string winMenuImg = "../titanic_eclipse/assets/menus/win-menu.png";
 #endif
+
+    // Setting player, water, and door dimensions
+    player.setDim(128, 240);
+    water.setDim(WIDTH, HEIGHT);
+    door.setDim(40, 80);
 
     // Initialize player textures
     player.spriteSheet = new TextureWrap(renderer, playerTexPath);
@@ -130,11 +140,18 @@ void gameDisplay::levelInit(const int& doorX, const int& doorY) {
     platforms.spriteSheet = new TextureWrap(renderer, platformsTexPath);
 //    SDL_Rect platform1 = {192, 0, 64, 19};
 //    platforms.spriteClips.push_back(platform1);
+
+    // Initialize menu spritesheets
+    losemenu.spriteSheet = new TextureWrap(renderer, loseMenuImg);
+    pausemenu.spriteSheet = new TextureWrap(renderer, pauseMenuImg);
+    startmenu.spriteSheet = new TextureWrap(renderer, startMenuImg);
+    winmenu.spriteSheet = new TextureWrap(renderer, winMenuImg);
 }
 
-void gameDisplay::update(vector<object> objects, vector<bool> keys, bool grounded, bool win, bool lose) {
+void gameDisplay::update(vector<object> objects, vector<bool> keys, bool grounded) {
 	// Update objects
 	player.setPos(objects.at(0).getXCoord(), objects.at(0).getYCoord());
+    door.setPos(objects.at(1).getXCoord(), objects.at(1).getYCoord());
     water.setPos(0, objects.at(2).getYCoord());
 
 	// Update camera location to the center of the player in the y-axis
@@ -202,6 +219,133 @@ void gameDisplay::update(vector<object> objects, vector<bool> keys, bool grounde
 	SDL_RenderPresent(renderer);
 }
 
+void gameDisplay::setMenu(const menuStateType& menu) {
+	this->menuState = menu;
+}
+
+menuStateType gameDisplay::getMenu() {
+	return this->menuState;
+}
+
+//returns false if we're leaving the menu system, otherwise true
+bool gameDisplay::updateMenu(vector<bool> keys) {
+	// Clear screen
+	SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+	SDL_RenderClear(renderer);
+	int arrowx;
+	int arrowy;
+
+	if(menuState == start) {
+		if(keys[0]) { //up
+			if(optionSelected == 0) {
+				optionSelected = 1; //goto quit option
+			} else if(optionSelected == 1) { //goto start game option
+				optionSelected--;
+			}
+		} else if(keys[1]) { //down
+			if(optionSelected == 1) { //goto start game option
+				optionSelected = 0;
+			} else if(optionSelected == 0) { //goto quit option
+				optionSelected++;
+			}
+		} else if(keys[6]) { //enter
+			if(optionSelected == 0) { //start the game
+				return false;
+			} else if(optionSelected == 1) {
+				menuState = quit;
+				this->close();
+				return true;
+			}
+		}
+
+		if(optionSelected == 0) { //start game
+			arrowx = 340;
+			arrowy = 365;
+		} else { //quit
+			arrowx = 340;
+			arrowy = 465;
+		}
+
+		//render menu sprite to buffer
+		startmenu.spriteSheet->render(0, 0);
+		//render arrow to buffer
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+		SDL_RenderDrawLine(renderer, arrowx, arrowy, arrowx + 20, arrowy + 20);
+		SDL_RenderDrawLine(renderer, arrowx + 20, arrowy + 20, arrowx, arrowy + 40);
+
+	} else if(menuState == pause) {
+		if(keys[0]) { //up
+				if(optionSelected == 0) { //goto quit
+					optionSelected = 2;
+				} else {
+					optionSelected--;
+				}
+		} else if(keys[1]) { //down
+			if(optionSelected == 2) { //goto continue
+				optionSelected = 0;
+			} else {
+				optionSelected++;
+			}
+		} else if(keys[6]) { //space
+			 if(optionSelected == 0) { //return to the game
+				 return false;
+			 } else if(optionSelected == 1) { //return to the menu
+				 menuState = start;
+				 return true;
+			 } else if(optionSelected == 2){ //quit
+				 menuState = quit;
+				 this->close();
+				 return true;
+			 }
+		}
+		if(optionSelected == 0) { //continue
+			arrowx = 340;
+			arrowy = 310;
+		} else if (optionSelected == 1) { //return to main menu
+			arrowx = 280;
+			arrowy = 410;
+		} else { //quit
+			arrowx = 340;
+			arrowy = 510;
+		}
+
+		//render menu sprite to buffer
+		pausemenu.spriteSheet->render(0, 0);
+		//render arrow to buffer
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+		SDL_RenderDrawLine(renderer, arrowx, arrowy, arrowx + 20, arrowy + 20);
+		SDL_RenderDrawLine(renderer, arrowx + 20, arrowy + 20, arrowx, arrowy + 40);
+	} else if(menuState == win) {
+		if(keys[6]) { //enter
+			menuState = start; //for demo purposes return home
+			return true;
+		}
+
+		//render menu sprite to buffer
+		winmenu.spriteSheet->render(0, 0);
+		//render arrow to buffer
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+		SDL_RenderDrawLine(renderer, 280, 380, 300, 400);
+		SDL_RenderDrawLine(renderer, 300, 400, 280, 420);
+	} else { //lose
+		if(keys[6]) { //enter
+			menuState = start;
+			return true;
+		}
+		//render menu sprite to buffer
+		losemenu.spriteSheet->render(0, 0);
+		//render arrow to buffer
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+		SDL_RenderDrawLine(renderer, 280, 380, 300, 400);
+		SDL_RenderDrawLine(renderer, 300, 400, 280, 420);
+	}
+
+	// Dumping buffer to screen
+	SDL_RenderPresent(renderer);
+
+	return true;
+}
+
 void gameDisplay::close() {
     // Free textures
     delete player.spriteSheet;
@@ -213,14 +357,14 @@ void gameDisplay::close() {
     door.spriteSheet = nullptr;
     platforms.spriteSheet = nullptr;
 
-	// Destroying everything!
-	SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(window);
-	renderer = nullptr;
-	window = nullptr;
+    // Destroying everything!
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    renderer = nullptr;
+    window = nullptr;
 
-	// Quit SDL subsystems
-	SDL_Quit();
+    // Quit SDL subsystems
+    SDL_Quit();
 }
 
 SDLException::SDLException(string msg): errMsg(move(msg)) {}
