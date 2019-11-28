@@ -27,9 +27,9 @@ public:
     void addYSpeed(const double& newval);
     double getGrav();
     void setGrav(const double& newval);
-    bool containsPoint(const double& x, const double& y);
     bool isGrounded();
-    void setGrounded(const bool newval);
+    void setGrounded(const bool& newval);
+    // bool containsPoint(const double& x, const double& y);
 private:
     bool grounded = true;
     double xcoord;
@@ -46,18 +46,14 @@ private:
 class physicsEngine {
 public:
 	physicsEngine();
-    physicsEngine(object player, object door, object water, vector<object> platforms);
+    physicsEngine(const object& player, const object& door, const object& water,const vector<object>& platforms);
     void updateObjects(const vector<bool> &keypresses); //needs to take whatever the data format for key press input is
     vector<object> getState();
     bool checkIntersection(object obj1, object obj2);
     double* getMaxVector(object obj1, object obj2);
     bool getWinState();
     bool getLoseState();
-//    bool isCompleted();
-//    bool isFailed();
 private:
-//    bool completed = false;
-//    bool failed = false;
     object player;
     object door;
     object water;

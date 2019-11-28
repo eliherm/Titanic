@@ -5,8 +5,6 @@
 #include "view.h"
 #include <iostream>
 
-
-
 // Include the SDL image header based on the platform
 #ifdef WINDOWS
     #include <SDL2/SDL_image.h>
@@ -143,7 +141,7 @@ void gameDisplay::initTextures() {
 //    SDL_Rect platform1 = {192, 0, 64, 19};
 //    platforms.spriteClips.push_back(platform1);
 
-    // Initialize menu spritesheets
+    // Initialize menu sprite sheets
     losemenu.spriteSheet = new TextureWrap(renderer, loseMenuImg);
     pausemenu.spriteSheet = new TextureWrap(renderer, pauseMenuImg);
     startmenu.spriteSheet = new TextureWrap(renderer, startMenuImg);
@@ -172,43 +170,44 @@ void gameDisplay::update(vector<object> objects, vector<bool> keys, bool grounde
 	}
 
     // Render player with animation
-
 	//LEFT
-    if (keys[2] && !keys[3] && grounded) { // Left and on the ground
-        // Reset frame information for other directions
-        for (auto i : player.frames[0])
-            if (i != 1) i = 0;
+    if (keys[2] && !keys[3]) {
+        if (grounded && !(keys[0] || keys[4])) { // Left and on the ground
+            // Reset frame information for other directions
+            for (auto i : player.frames[0])
+                if (i != 1) i = 0;
 
-        // Render the frame
-        player.spriteSheet->render(player.getXPos(), player.getYPos() - camera.y,
-                                   &(player.spriteClips.at(1 + (player.frames[0][1] / ANIMATION_DELAY))));
+            // Render the frame
+            player.spriteSheet->render(player.getXPos(), player.getYPos() - camera.y,
+                                       &(player.spriteClips.at(1 + (player.frames[0][1] / ANIMATION_DELAY))));
 
-        // Increment frame count for left direction
-        player.frames[0][1]++;
-        if (player.frames[0][1] / ANIMATION_DELAY >= player.frames[1][1])
-            player.frames[0][1] = 0;
-    } else if (keys[2] && !keys[3] && !grounded) { //left and in the air
-    	player.spriteSheet->render(player.getXPos(), player.getYPos() - camera.y, &(player.spriteClips.at(1))); //make this the sprite for in the air moving left
+            // Increment frame count for left direction
+            player.frames[0][1]++;
+            if (player.frames[0][1] / ANIMATION_DELAY >= player.frames[1][1])
+                player.frames[0][1] = 0;
+        } else { // left and in the air
+            player.spriteSheet->render(player.getXPos(), player.getYPos() - camera.y, &(player.spriteClips.at(1))); //make this the sprite for in the air moving left
+        }
     }
-
     //RIGHT
-	else if (keys[3] && !keys[2] && grounded) { // Right and on the ground
-        // Reset frame information for other directions
-        for (auto i : player.frames[0])
-            if (i != 2) i = 0;
+    else if (keys[3] && !keys[2]) {
+          if (grounded && !(keys[0] || keys[4])) {  // Right and on the ground
+              // Reset frame information for other directions
+              for (auto i : player.frames[0])
+                  if (i != 2) i = 0;
 
-        // Render the frame
-        player.spriteSheet->render(player.getXPos(), player.getYPos() - camera.y,
-                                   &(player.spriteClips.at(4 + (player.frames[0][2] / ANIMATION_DELAY))));
+              // Render the frame
+              player.spriteSheet->render(player.getXPos(), player.getYPos() - camera.y,
+                                         &(player.spriteClips.at(4 + (player.frames[0][2] / ANIMATION_DELAY))));
 
-        // Increment frame count for right direction
-        player.frames[0][2]++;
-        if (player.frames[0][2] / ANIMATION_DELAY >= player.frames[1][2])
-            player.frames[0][2] = 0;
-    } else if (keys[3] && !keys[2] && !grounded){ //Right and in the air
-    	player.spriteSheet->render(player.getXPos(), player.getYPos() - camera.y, &(player.spriteClips.at(4))); //make this the sprite for in the air moving right
+              // Increment frame count for right direction
+              player.frames[0][2]++;
+              if (player.frames[0][2] / ANIMATION_DELAY >= player.frames[1][2])
+                  player.frames[0][2] = 0;
+          } else { //Right and in the air
+              player.spriteSheet->render(player.getXPos(), player.getYPos() - camera.y, &(player.spriteClips.at(4))); //make this the sprite for in the air moving right
+          }
     }
-
     //STANDING STILL
     else {
          player.spriteSheet->render(player.getXPos(), player.getYPos() - camera.y, &(player.spriteClips.at(0)));
@@ -354,10 +353,19 @@ void gameDisplay::close() {
     delete water.spriteSheet;
     delete door.spriteSheet;
     delete platforms.spriteSheet;
+    delete losemenu.spriteSheet;
+    delete pausemenu.spriteSheet;
+    delete startmenu.spriteSheet;
+    delete winmenu.spriteSheet;
+
     player.spriteSheet = nullptr;
     water.spriteSheet = nullptr;
     door.spriteSheet = nullptr;
     platforms.spriteSheet = nullptr;
+    losemenu.spriteSheet = nullptr;
+    pausemenu.spriteSheet = nullptr;
+    startmenu.spriteSheet = nullptr;
+    winmenu.spriteSheet = nullptr;
 
     // Destroying everything!
     SDL_DestroyRenderer(renderer);

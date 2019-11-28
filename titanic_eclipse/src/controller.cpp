@@ -1,6 +1,6 @@
 #include <iostream>
-#include <SDL2/SDL.h>
 #include <time.h>
+#include <SDL2/SDL.h>
 #include <vector>
 #include "view.h"
 #include "physics.h"
@@ -50,7 +50,7 @@ void Controller::run() {
 	    SDL_Event e;
         while (SDL_PollEvent(&e) != 0) {
             // User requests quit
-            if( e.type == SDL_QUIT ) {
+            if(e.type == SDL_QUIT) {
                 running =  false;
             }
         }
@@ -89,15 +89,15 @@ void Controller::run() {
 
 					if(activeScreen.getMenu() == start) {
 						//load level 1
-						object player;
-						player = object(280, 195 , 128, 240, 0.5);
-						object door = object(700, 50, 40, 80, 0);
-						object water = object(0, 700, 960, 720 - 60, 0);
+						object player = object(300, 400, 128, 240, 0.5);
+						object door = object(900, 110, 40, 80, 0);
+						object water = object(0, 700, 960, 690, 0);
 						vector<object> platforms;
 						platforms = vector<object>();
-						platforms.push_back(object(500, 20, 300, 10, 0));
-						platforms.push_back(object(200, 440, 300, 10, 0));
-						platforms.push_back(object(264, 440, 300, 10, 0));
+                        platforms.push_back(object(214, 650, 300, 10, 0));
+                        platforms.push_back(object(550, 500, 300, 10, 0));
+                        platforms.push_back(object(100, 330, 300, 10, 0));
+                        platforms.push_back(object(700, 200, 300, 10, 0));
 
 						activeEngine = physicsEngine(player, door, water, platforms);
 					}
@@ -107,11 +107,9 @@ void Controller::run() {
 				tcnt = 0;
 			}
 		}
-		//will eventually load new level if one is finished
 	}
 }
 
-//untested!! it's relatively simple so its unlikely to have errors, but should be tested once view and physics are on-board
 vector<object> Controller::getVisibleObjects(const int& width, const int& height) {//takes width and height of the window, returns an array of all objects within that window, centered on the player. with the player as the first object. in the future object should include an id of some sort that can be translated to a sprite
 	vector<object> all = activeEngine.getState();
 	vector<object> visible;
@@ -142,7 +140,7 @@ void Controller::doPhysics() {//to be implemented in the physics branch
 
 void Controller::doFrame() {//to be implemented in the view branch
 	if(!inmenu) {
-		activeScreen.update(getVisibleObjects(WIDTH, HEIGHT), getKeyStates(), activeEngine.getState()[0].isGrounded());//will eventually include checks on victory or loss conditions
+		activeScreen.update(getVisibleObjects(WIDTH, HEIGHT), getKeyStates(), activeEngine.getState()[0].isGrounded());
 	}/* else {
 		if(!activeScreen.updateMenu(getKeyStates())) {
 			inmenu = false;

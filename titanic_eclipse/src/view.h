@@ -50,7 +50,7 @@ private:
 // Handles SDL exceptions
 class SDLException: public exception {
 public:
-    explicit SDLException(string  msg);
+    explicit SDLException(string msg);
     string& what(); // Reports the error message
 private:
     string errMsg;
@@ -58,7 +58,7 @@ private:
 
 class SDLImgException: public exception {
 public:
-    explicit SDLImgException(string  msg);
+    explicit SDLImgException(string msg);
     string& what(); // Reports the error message
 private:
     string errMsg;

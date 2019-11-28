@@ -109,12 +109,12 @@ bool object::isGrounded() {
 	return grounded;
 }
 
-void object::setGrounded(const bool newval) {
+void object::setGrounded(const bool& newval) {
 	grounded = newval;
 }
 
 physicsEngine::physicsEngine(): win(false), lose(false) {}
-physicsEngine::physicsEngine(object player, object door, object water, vector<object> platforms) {
+physicsEngine::physicsEngine(const object& player, const object& door, const object& water, const vector<object>& platforms) {
 	this->player = player;
 	this->door = door;
 	this->water = water;
@@ -172,7 +172,6 @@ void physicsEngine::updateObjects(const vector<bool> &keypresses) {
 
 	//apply gravity to relevant objects (currently only player)
 	player.addYSpeed(PLAYERGRAVITY);
-	bool resetgrav = false;
 
 	//check collisions between relevant objects (currently only player) and all objects. if others are implemented, will be placed in a loop iterating through the list
 	double* movement = new double[2];
@@ -182,12 +181,11 @@ void physicsEngine::updateObjects(const vector<bool> &keypresses) {
 		double* temp = getMaxVector(player, platforms.at(i));
 		if(abs(temp[0]) < abs(movement[0])){//hit a wall, x vector is closer to 0
 			movement[0] = temp[0];
-			player.setXSpeed(0);
+            player.setXSpeed(0);
 		}
 		if(temp[1] < movement[1] && movement[1] > 0){//hit a floor
 			movement[1] = temp[1];
             player.setYSpeed(0);
-			resetgrav = true;
 			player.setGrounded(true);//only ground on floor hit, not ceiling hit
 		}else if(temp[1] > movement[1] && movement[1] < 0){//hit a ceiling
 			movement[1] = temp[1];
@@ -196,10 +194,8 @@ void physicsEngine::updateObjects(const vector<bool> &keypresses) {
 
 		delete[] temp;
 	}
-	//if no collisions, move object (before checking the next object), else compute collision behavior
-	if(resetgrav)
-        player.setYSpeed(0); //reset gravity on collision with platform
 
+	//if no collisions, move object (before checking the next object), else compute collision behavior
     player.addCoord(movement[0], movement[1]);
 	delete[] movement;
 
@@ -212,7 +208,6 @@ void physicsEngine::updateObjects(const vector<bool> &keypresses) {
 }
 
 bool physicsEngine::checkIntersection(object obj1, object obj2) {
-
 	for(int i = 0; i < obj1.getWidth(); ++i) {
 		int x = obj1.getXCoord() + i;
 		int topy = obj1.getYCoord();
