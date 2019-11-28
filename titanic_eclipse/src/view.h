@@ -8,35 +8,16 @@
 #include <string>
 #include <vector>
 #include "physics.h"
+#include "sprite.h"
 using namespace std;
-
-class sprite {
-public:
-	sprite();
-	sprite(const int& xpos, const int& ypos, const int& width, const int& height);
-	void setPos(const int& xpos, const int& ypos);
-	void setDim(const int& width, const int& height);
-
-	int getWidth() const;
-	int getHeight() const;
-	int getXPos() const;
-	int getYPos() const;
-
-private:
-	int xcoord;
-	int ycoord;
-	int width;
-	int height;
-};
 
 class gameDisplay {
 public:
-    gameDisplay();  // unusable, only for initial null objects
-	gameDisplay(const string& windowName, const int& hght, const int& wdth);
-	void levelInit(const int& doorX, const int& doorY);
-	void update(vector<object> objects, bool win, bool lose);
-	void close();
-
+    gameDisplay();                                                                  // Initialize null objects
+    gameDisplay(const string& windowName, const int& wdth, const int& hght);        // Constructor
+    void levelInit(const int& doorX, const int& doorY);                             // Initialize a level
+    void update(vector<object> objects, vector<bool> keys, bool grounded, bool win, bool lose);    // Updates all objects
+    void close();                                                                   // Free up resources
 private:
     // Main window
 	SDL_Window* window;
@@ -46,9 +27,12 @@ private:
 	SDL_Renderer* renderer; // Main renderer
 
 	// Sprites
+    sprite player;
+    sprite water;
 	sprite door;
-	sprite player;
-	sprite water;
+	sprite platforms;
+
+    SDL_Rect camera;  // Rectangle to track player movement in the level
 };
 
 // Handles SDL exceptions

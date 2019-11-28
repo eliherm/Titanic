@@ -6,23 +6,32 @@
 #include "keyboardInput.h"
 #include "controller.h"
 
-const int HEIGHT = 720;
 const int WIDTH = 960;
+const int HEIGHT = 720;
 
 int main(int argc, char *argv[]) {
 	//main menu, initialization of objects, etc
 	Controller c(60, 60);
 	c.run();
 	c.activeScreen.close();
+	return 0;
 }
 
 Controller::Controller(int fps, int tps) {
 	this->f_time = CLOCKS_PER_SEC / fps;
 	this->t_time = CLOCKS_PER_SEC / tps;
 
-    activeScreen = gameDisplay("titanic", HEIGHT, WIDTH);
-    activeScreen.levelInit(400, 50);
-    keyboardIo = keyboardInput();
+	try {
+        activeScreen = gameDisplay("titanic", WIDTH, HEIGHT);
+        activeScreen.levelInit(800, 50);
+        keyboardIo = keyboardInput();
+    } catch (SDLImgException& e) {
+        cerr << e.what() << endl;
+        exit(1);
+    } catch(SDLException& e) {
+        cerr << e.what() << endl;
+        exit(1);
+    }
 }
 
 void Controller::run() {
@@ -93,5 +102,5 @@ void Controller::doPhysics() {//to be implemented in the physics branch
 }
 
 void Controller::doFrame() {//to be implemented in the view branch
-	activeScreen.update(getVisibleObjects(HEIGHT, WIDTH), activeEngine.isCompleted(), activeEngine.isFailed());
+	activeScreen.update(getVisibleObjects(WIDTH, HEIGHT), getKeyStates(), activeEngine.getState()[0].isGrounded(), activeEngine.isCompleted(), activeEngine.isFailed());//will eventually include checks on victory or loss conditions
 }

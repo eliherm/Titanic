@@ -1,53 +1,29 @@
+//#define WINDOWS   // Define the platform
+
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 #include <iostream>
 #include <utility>
 #include <vector>
 #include "view.h"
+#include <iostream>
+
+// Include the SDL image header based on the platform
+#ifdef WINDOWS
+    #include <SDL2/SDL_image.h>
+#else
+    #include <SDL_image.h>
+#endif
 using namespace std;
 
-sprite::sprite() {
-	this->xcoord = 0;
-	this->ycoord = 0;
-	this->width = 0;
-	this->height = 0;
-}
+#define ANIMATION_DELAY 10  // Controls how fast frames are rendered in an animation cycle
 
-sprite::sprite(const int &xpos, const int &ypos, const int &width, const int &height) {
-	this->xcoord = xpos;
-	this->ycoord = ypos;
-	this->width = width;
-	this->height = height;
-}
-
-void sprite::setDim(const int& width, const int& height) {
-	this->width = width;
-	this->height = height;
-}
-
-void sprite::setPos(const int &xpos, const int &ypos) {
-	xcoord = xpos;
-	ycoord = ypos;
-}
-
-// Sprite Accessors
-int sprite::getWidth() const { return this->width; }
-int sprite::getHeight() const { return this->height; }
-int sprite::getXPos() const { return this->xcoord; }
-int sprite::getYPos() const { return this->ycoord; }
-
-gameDisplay::gameDisplay() {
-    WIDTH = 0;
-    HEIGHT = 0;
-    window = nullptr;
-    renderer = nullptr;
-}
-
-gameDisplay::gameDisplay(const string& windowName, const int& height, const int& width) {
+gameDisplay::gameDisplay(): WIDTH(0), HEIGHT(0), window(nullptr), renderer(nullptr), camera({0, 0, WIDTH, HEIGHT}) {}
+gameDisplay::gameDisplay(const string& windowName, const int& width, const int& height) {
     WIDTH = width;
     HEIGHT = height;
     window = nullptr;
     renderer = nullptr;
+    camera = {0, 0, WIDTH, HEIGHT};
 
     try {
         // Initialize SDL
@@ -67,7 +43,7 @@ gameDisplay::gameDisplay(const string& windowName, const int& height, const int&
         }
 
         // Create renderer for the window
-        renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+        renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
         if (renderer == nullptr) {
             throw SDLException("The renderer could not be created!");
         }
@@ -91,50 +67,153 @@ gameDisplay::gameDisplay(const string& windowName, const int& height, const int&
 
 void gameDisplay::levelInit(const int& doorX, const int& doorY) {
 	// Setting player, water, and door dimensions
-	player.setDim(40, 80);
-	water.setDim(WIDTH, HEIGHT);
-	door.setDim(40, 80);
+	player.setDim(128, 240);
+    water.setDim(WIDTH, HEIGHT);
+    door.setDim(40, 80);
 
 	// Setting door position
 	door.setPos(doorX, doorY);
+
+	// Initialize the paths to textures
+#ifdef WINDOWS
+    string playerTexPath = "..\\titanic\\titanic_eclipse\\assets\\player.png";
+    string waterTexPath = "..\\titanic\\titanic_eclipse\\assets\\water.png";
+    string doorTexPath = "..\\titanic\\titanic_eclipse\\assets\\door.png";
+    string platformsTexPath = "..\\titanic\\titanic_eclipse\\assets\\platform.png";
+#else
+    string playerTexPath = "../titanic_eclipse/assets/player.png";
+    string waterTexPath = "../titanic_eclipse/assets/water.png";
+    string doorTexPath = "../titanic_eclipse/assets/door.png";
+    string platformsTexPath = "../titanic_eclipse/assets/platform.png";
+#endif
+
+    // Initialize player textures
+    player.spriteSheet = new TextureWrap(renderer, playerTexPath);
+
+    /*
+     * Initialize animation parameters for the player
+     * playerFrames[0][x] -> Current frame for a given direction x
+     * playerFrames[1][x] -> Total number of frames for a given direction x
+     */
+
+    vector<vector<int>> playerFrames { {0, 0, 0}, {1, 3, 3} };
+    player.enableAnimation(playerFrames);
+
+    // Set sprite clips for the player
+    SDL_Rect playerFrontClip = {32, 24, 128, 240};      // Front sprite
+    SDL_Rect playerLeftClip1 = {552, 288, 104, 240};    // Left sprite (frame 1)
+    SDL_Rect playerLeftClip2 = {680, 288, 120, 240};    // Left sprite (frame 2)
+    SDL_Rect playerLeftClip3 = {816, 288, 120, 240};    // Left sprite (frame 3)
+
+    SDL_Rect playerRightClip1 = {552, 24, 104, 240};    // Right sprite (frame 1)
+    SDL_Rect playerRightClip2 = {688, 24, 120, 240};    // Right sprite (frame 2)
+    SDL_Rect playerRightClip3 = {840, 24, 120, 240};    // Right sprite (frame 3)
+    SDL_Rect playerBackClip = {32, 288, 128, 240};      // Back sprite
+
+    player.spriteClips.push_back(playerFrontClip);
+    player.spriteClips.push_back(playerLeftClip1);
+    player.spriteClips.push_back(playerLeftClip2);
+    player.spriteClips.push_back(playerLeftClip3);
+    player.spriteClips.push_back(playerRightClip1);
+    player.spriteClips.push_back(playerRightClip2);
+    player.spriteClips.push_back(playerRightClip3);
+    player.spriteClips.push_back(playerBackClip);
+
+    // Initialize water textures
+    water.spriteSheet = new TextureWrap(renderer, waterTexPath);
+
+    // Initialize door textures
+    door.spriteSheet = new TextureWrap(renderer, doorTexPath);
+    SDL_Rect doorClip = {193, 384, 46, 95};
+    door.spriteClips.push_back(doorClip);
+
+    // Initialize platforms
+    platforms.spriteSheet = new TextureWrap(renderer, platformsTexPath);
+//    SDL_Rect platform1 = {192, 0, 64, 19};
+//    platforms.spriteClips.push_back(platform1);
 }
 
-void gameDisplay::update(vector<object> objects, bool win, bool lose) {
-	// update objects
+void gameDisplay::update(vector<object> objects, vector<bool> keys, bool grounded, bool win, bool lose) {
+	// Update objects
 	player.setPos(objects.at(0).getXCoord(), objects.at(0).getYCoord());
-	water.setPos(0, objects.at(2).getYCoord());
+    water.setPos(0, objects.at(2).getYCoord());
 
-	// Draw background
-	SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-	SDL_RenderClear(renderer);
+	// Update camera location to the center of the player in the y-axis
+	camera.y = (player.getYPos() + player.getHeight() / 2) - HEIGHT / 2;
 
-	// Draw water
-	SDL_Rect waterRect = {0, water.getYPos(), water.getWidth(), water.getHeight()};
-	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0xff, 0xff);
-	SDL_RenderFillRect(renderer, &waterRect);
+    // Clear screen
+    SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+    SDL_RenderClear(renderer);
 
-    // Draw door
-    SDL_Rect doorRect = {door.getXPos(), door.getYPos(), door.getWidth(), door.getHeight()};
-    SDL_SetRenderDrawColor(renderer, 0xd2, 0xb4, 0x8c, 0xff);
-    SDL_RenderFillRect(renderer, &doorRect);
+    // Render door
+    door.spriteSheet->render(door.getXPos(), door.getYPos() - camera.y, &(door.spriteClips.at(0)));
 
 	// Draw platforms
-	SDL_SetRenderDrawColor(renderer, 0xc2, 0xc5, 0xcc, 0xff);
 	for (int i = 3; i < objects.size(); i++) {
-		SDL_Rect platform = {static_cast<int>(objects.at(i).getXCoord()), static_cast<int>(objects.at(i).getYCoord()), objects.at(i).getWidth(), objects.at(i).getHeight()};
-		SDL_RenderFillRect(renderer, &platform);
+        platforms.spriteSheet->render(objects.at(i).getXCoord(), objects.at(i).getYCoord() - camera.y, nullptr);
 	}
 
-	// Draw player
-	SDL_Rect playerRect = {player.getXPos(), player.getYPos(), player.getWidth(), player.getHeight()};
-	SDL_SetRenderDrawColor(renderer, 0xff, 0x00, 0x00, 0xff);
-	SDL_RenderFillRect(renderer, &playerRect);
+    // Render player with animation
+
+	//LEFT
+    if (keys[2] && !keys[3] && grounded) { // Left and on the ground
+        // Reset frame information for other directions
+        for (auto i : player.frames[0])
+            if (i != 1) i = 0;
+
+        // Render the frame
+        player.spriteSheet->render(player.getXPos(), player.getYPos() - camera.y,
+                                   &(player.spriteClips.at(1 + (player.frames[0][1] / ANIMATION_DELAY))));
+
+        // Increment frame count for left direction
+        player.frames[0][1]++;
+        if (player.frames[0][1] / ANIMATION_DELAY >= player.frames[1][1])
+            player.frames[0][1] = 0;
+    } else if (keys[2] && !keys[3] && !grounded) { //left and in the air
+    	player.spriteSheet->render(player.getXPos(), player.getYPos() - camera.y, &(player.spriteClips.at(7))); //make this the sprite for in the air moving left
+    }
+
+    //RIGHT
+	else if (keys[3] && !keys[2] && grounded) { // Right and on the ground
+        // Reset frame information for other directions
+        for (auto i : player.frames[0])
+            if (i != 2) i = 0;
+
+        // Render the frame
+        player.spriteSheet->render(player.getXPos(), player.getYPos() - camera.y,
+                                   &(player.spriteClips.at(4 + (player.frames[0][2] / ANIMATION_DELAY))));
+
+        // Increment frame count for right direction
+        player.frames[0][2]++;
+        if (player.frames[0][2] / ANIMATION_DELAY >= player.frames[1][2])
+            player.frames[0][2] = 0;
+    } else if (keys[3] && !keys[2] && !grounded){ //Right and in the air
+    	player.spriteSheet->render(player.getXPos(), player.getYPos() - camera.y, &(player.spriteClips.at(7))); //make this the sprite for in the air moving right
+    }
+
+    //STANDING STILL
+    else {
+         player.spriteSheet->render(player.getXPos(), player.getYPos() - camera.y, &(player.spriteClips.at(0)));
+    }
+
+    // Render water
+    water.spriteSheet->render(0, water.getYPos() - camera.y, nullptr);
 
 	// Dumping buffer to screen
 	SDL_RenderPresent(renderer);
 }
 
 void gameDisplay::close() {
+    // Free textures
+    delete player.spriteSheet;
+    delete water.spriteSheet;
+    delete door.spriteSheet;
+    delete platforms.spriteSheet;
+    player.spriteSheet = nullptr;
+    water.spriteSheet = nullptr;
+    door.spriteSheet = nullptr;
+    platforms.spriteSheet = nullptr;
+
 	// Destroying everything!
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
