@@ -5,6 +5,9 @@
 #include <vector>
 #include "keyboardInput.h"
 #include "physics.h"
+#include "sprite.h"
+#include "view.h"
+
 using namespace std;
 
 int main(int argc, char *argv[]);

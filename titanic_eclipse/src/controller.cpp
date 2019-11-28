@@ -7,7 +7,6 @@
 #include "keyboardInput.h"
 #include "controller.h"
 
-//#define WINDOWS   // Define the platform
 const int WIDTH = 960;
 const int HEIGHT = 720;
 

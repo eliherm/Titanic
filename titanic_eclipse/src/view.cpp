@@ -5,6 +5,8 @@
 #include "view.h"
 #include <iostream>
 
+
+
 // Include the SDL image header based on the platform
 #ifdef WINDOWS
     #include <SDL2/SDL_image.h>
@@ -77,9 +79,9 @@ void gameDisplay::initTextures() {
     	string doorTexPath = "..\\titanic\\titanic_eclipse\\assets\\door.png";
     	string platformsTexPath = "..\\titanic\\titanic_eclipse\\assets\\platform.png";
     	string loseMenuImg = "..\\titanic\\titanic_eclipse\\assets\\menus\\lose-menu.png";
-    	string pauseMenuImg = "..\\titanic_eclipse\\assets\\menus\\pause-menu.png";
-    	string startMenuImg = "..\\titanic_eclipse\\assets\\menus\\start-menu.png";
-    	string winMenuImg = "..\\titanic_eclipse\\assets\\menus\\win-menu.png";
+    	string pauseMenuImg = "..\\titanic\\titanic_eclipse\\assets\\menus\\pause-menu.png";
+    	string startMenuImg = "..\\titanic\\titanic_eclipse\\assets\\menus\\start-menu.png";
+    	string winMenuImg = "..\\titanic\\titanic_eclipse\\assets\\menus\\win-menu.png";
 #else
     string playerTexPath = "../titanic_eclipse/assets/player.png";
     string waterTexPath = "../titanic_eclipse/assets/water.png";
