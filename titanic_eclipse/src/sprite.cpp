@@ -1,4 +1,4 @@
-#define WINDOWS   // Define the platform
+//#define WINDOWS   // Define the platform
 
 #include "sprite.h"
 #include "view.h"
