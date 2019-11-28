@@ -120,10 +120,13 @@ void object::setGrounded(const bool newval) {
 
 physicsEngine::physicsEngine(){
 	player = object(200, 40, 40, 80, PLAYERGRAVITY);
-	door = object(400, 50, 40, 80, 0);
-	water = object(0, 60, 960, 10, 0);
+	door = object(770, 20, 40, 80, 0);
+	water = object(0, 600, 960, 10, 0);
 	platforms = vector<object>();
 	platforms.push_back(object(0, 200, 300, 10, 0));
+	platforms.push_back(object(300, 300, 300, 10, 0));
+	platforms.push_back(object(650, 250, 100, 10, 0));
+	platforms.push_back(object(750, 200, 100, 10, 0));
 }
 
 physicsEngine::physicsEngine(object player, object door, object water, vector<object> platforms) {
@@ -197,14 +200,21 @@ void physicsEngine::updateObjects(const vector<bool> &keypresses) {
 	movement[1] = player.getYSpeed();
 	for(int i = 0; i < platforms.size(); i++){
 		double* temp = getMaxVector(player, platforms.at(i));
+		//printf("%d : %f %f %f %f\n", i, temp[0], temp[1], movement[0], movement[1]);
 		if(abs(temp[0]) < abs(movement[0])){//hit a wall, x vector is closer to 0
 			movement[0] = temp[0];
+			player.setXSpeed(0);
 		}
 		if(temp[1] < movement[1] && movement[1] > 0){//hit a floor
 			movement[1] = temp[1];
+			player.setYSpeed(0);
 			player.setGrounded(true);//only ground on floor hit, not ceiling hit
-		}else if(temp[1] > movement[1] && movement[1] < 0){//hit a ceiling
+		}else{
+			player.setGrounded(false);
+		}
+		if(temp[1] > movement[1] && movement[1] < 0){//hit a ceiling
 			movement[1] = temp[1];
+			player.setYSpeed(0);
 		}
 	}
 	//if no collisions, move object (before checking the next object), else compute collision behavior
@@ -258,6 +268,13 @@ double* physicsEngine::getMaxVector(object obj1, object obj2) {
 	while(!checkIntersection(obj1copy, obj2) && !checkIntersection(obj2, obj1copy) && segments < speed) {
 		obj1copy.setCoord(obj1copy.getXCoord() + xnorm, obj1copy.getYCoord() + ynorm);
 		segments++;
+	}
+
+	//if it doesn't collide
+	if(!checkIntersection(obj1copy, obj2)){
+		result[0] = obj1.getXSpeed();
+		result[1] = obj1.getYSpeed();
+		return result;
 	}
 
 	//correct for bullet paper problem
