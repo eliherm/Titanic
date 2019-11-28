@@ -1,7 +1,7 @@
 #include "keyboardInput.h"
 
 keyboardInput::keyboardInput() { //on start, the keys will be initialized to false, but will never be forced back to false to avoid rapid switching
-    for (int i = 0; i < 7; i++) {
+    for (int i = 0; i < 8; i++) {
         keyStates.push_back(false);
     }
 }
