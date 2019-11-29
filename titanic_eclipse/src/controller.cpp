@@ -158,9 +158,5 @@ void Controller::doPhysics() {//to be implemented in the physics branch
 void Controller::doFrame() {//to be implemented in the view branch
 	if(!inmenu) {
 		activeScreen.update(getVisibleObjects(WIDTH, HEIGHT), getKeyStates(), activeEngine.getState()[0].isGrounded());
-	}/* else {
-		if(!activeScreen.updateMenu(getKeyStates())) {
-			inmenu = false;
-		}
-	}*/
+	}
 }
