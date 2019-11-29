@@ -16,14 +16,6 @@
 const int WIDTH = 960;
 const int HEIGHT = 720;
 
-/*
-#ifdef WINDOWS
-    string musicpath = "..\\titanic\\titanic_eclipse\\assets\\theme.wav";
-#else
-    string musicpath = "./assets/theme.wav";
-#endif
-*/
-
 int main(int argc, char *argv[]) {
 	//load theme
 	SDL_Init(SDL_INIT_AUDIO);
@@ -34,7 +26,7 @@ int main(int argc, char *argv[]) {
 #else
 	gMusic = Mix_LoadMUS("../titanic_eclipse/assets/theme.wav");
 #endif
-	if(Mix_PlayMusic(gMusic, -1) == -1) {
+	if(Mix_PlayMusic(gMusic, -1) == -1) { //starts music with troubleshooting if music doesnt work
 		printf("Mix_PlayMusic: %s\n", Mix_GetError());
 	}
 
