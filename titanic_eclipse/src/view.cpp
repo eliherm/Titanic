@@ -72,7 +72,7 @@ gameDisplay::gameDisplay(const string& windowName, const int& width, const int& 
 void gameDisplay::initTextures() {
     // Initialize the paths to textures
 #ifdef WINDOWS
-    string playerTexPath = "..\\titanic\\titanic_eclipse\\assets\\player.png";
+    string playerTexPath = "..\\titanic\\titanic_eclipse\\assets\\sailor-spritesheet.png";
     	string waterTexPath = "..\\titanic\\titanic_eclipse\\assets\\water.png";
     	string doorTexPath = "..\\titanic\\titanic_eclipse\\assets\\door.png";
     	string platformsTexPath = "..\\titanic\\titanic_eclipse\\assets\\platform.png";
