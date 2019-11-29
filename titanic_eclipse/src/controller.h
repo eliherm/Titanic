@@ -27,6 +27,7 @@ public:
 private:
 	int f_time;
 	int t_time;
+	int level = 1;
 	bool inmenu;
 
 	void doPhysics();

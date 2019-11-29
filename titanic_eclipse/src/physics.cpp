@@ -5,7 +5,14 @@
 #include <stdio.h>
 #include <vector>
 #include <iostream>
+#include <fstream>
 #include "physics.h"
+
+#ifdef WINDOWS
+    string prefix = "..\\titanic\\titanic_eclipse\\levels\\";
+#else
+    string prefix = "../titanic_eclipse/levels/";
+#endif
 
 const double PLAYERGRAVITY = 0.5, JUMPSPEED = 10, MAXRUNSPEED = 4, RUNACCELERATION = 0.6; //Originally: 0.5, 10, 2, 0.2
 
@@ -122,6 +129,37 @@ physicsEngine::physicsEngine(const object& player, const object& door, const obj
 
 	win = false;
 	lose = false;
+}
+
+physicsEngine::physicsEngine(const string level) {
+	ifstream fileIn("..\\titanic\\titanic_eclipse\\levels\\" + level);
+	if (fileIn.fail()) cout << "fail" << endl;
+		string x, y, width, height;
+		getline(fileIn, x, '\t');
+		getline(fileIn, y, '\t');
+		getline(fileIn, width, '\t');
+		getline(fileIn, height, '\t');
+		player = object(stod(x), stod(y), stod(width), stod(height), PLAYERGRAVITY);
+		getline(fileIn, x, '\t');
+		getline(fileIn, y, '\t');
+		getline(fileIn, width, '\t');
+		getline(fileIn, height, '\t');
+		door = object(stod(x), stod(y), stod(width), stod(height), 0);
+		getline(fileIn, x, '\t');
+		getline(fileIn, y, '\t');
+		getline(fileIn, width, '\t');
+		getline(fileIn, height, '\t');
+		water = object(stod(x), stod(y), stod(width), stod(height), 0);
+		platforms = vector<object>();
+		while (getline(fileIn, x, '\t')){
+			getline(fileIn, y, '\t');
+			getline(fileIn, width, '\t');
+			getline(fileIn, height, '\t');
+			platforms.push_back(object(stod(x), stod(y), stod(width), stod(height), 0));
+		}
+
+		win = false;
+		lose = false;
 }
 
 void physicsEngine::updateObjects(const vector<bool> &keypresses) {

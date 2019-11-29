@@ -318,8 +318,8 @@ bool gameDisplay::updateMenu(vector<bool> keys) {
 		SDL_RenderDrawLine(renderer, arrowx + 20, arrowy + 20, arrowx, arrowy + 40);
 	} else if(menuState == win) {
 		if(keys[6]) { //enter
-			menuState = start; //for demo purposes return home
-			return true;
+			//menuState = start; //for demo purposes return home
+			return false;
 		}
 
 		//render menu sprite to buffer

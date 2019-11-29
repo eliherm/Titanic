@@ -89,17 +89,15 @@ void Controller::run() {
 
 					if(activeScreen.getMenu() == start) {
 						//load level 1
-						object player = object(300, 400, 128, 240, 0.5);
-						object door = object(900, 110, 40, 80, 0);
-						object water = object(0, 700, 960, 690, 0);
-						vector<object> platforms;
-						platforms = vector<object>();
-                        platforms.push_back(object(214, 650, 300, 10, 0));
-                        platforms.push_back(object(550, 500, 300, 10, 0));
-                        platforms.push_back(object(100, 330, 300, 10, 0));
-                        platforms.push_back(object(700, 200, 300, 10, 0));
-
-						activeEngine = physicsEngine(player, door, water, platforms);
+						activeEngine = physicsEngine("level" + to_string(level) + ".txt");
+					}else if(activeScreen.getMenu() == win){
+						if(level == 5){
+							activeScreen.setMenu(start);
+							level = 1;
+						}else{
+							level++;
+							activeEngine = physicsEngine("level" + to_string(level) + ".txt");
+						}
 					}
 				} else if(activeScreen.getMenu() == quit) {
 					running = false;
