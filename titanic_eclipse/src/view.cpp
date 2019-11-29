@@ -81,7 +81,7 @@ void gameDisplay::initTextures() {
     	string startMenuImg = "..\\titanic\\titanic_eclipse\\assets\\menus\\start-menu.png";
     	string winMenuImg = "..\\titanic\\titanic_eclipse\\assets\\menus\\win-menu.png";
 #else
-    string playerTexPath = "../titanic_eclipse/assets/player.png";
+    string playerTexPath = "../titanic_eclipse/assets/sailor-spritesheet.png";
     string waterTexPath = "../titanic_eclipse/assets/water.png";
     string doorTexPath = "../titanic_eclipse/assets/door.png";
     string platformsTexPath = "../titanic_eclipse/assets/platform.png";
@@ -92,7 +92,7 @@ void gameDisplay::initTextures() {
 #endif
 
     // Setting player, water, and door dimensions
-    player.setDim(128, 240);
+    player.setDim(60, 128);
     water.setDim(WIDTH, HEIGHT);
     door.setDim(40, 80);
 
@@ -105,28 +105,30 @@ void gameDisplay::initTextures() {
      * playerFrames[1][x] -> Total number of frames for a given direction x
      */
 
-    vector<vector<int>> playerFrames { {0, 0, 0}, {1, 3, 3} };
+    vector<vector<int>> playerFrames { {0, 0, 0}, {1, 4, 4} };
     player.enableAnimation(playerFrames);
 
     // Set sprite clips for the player
-    SDL_Rect playerFrontClip = {32, 24, 128, 240};      // Front sprite
-    SDL_Rect playerLeftClip1 = {552, 288, 104, 240};    // Left sprite (frame 1)
-    SDL_Rect playerLeftClip2 = {680, 288, 120, 240};    // Left sprite (frame 2)
-    SDL_Rect playerLeftClip3 = {816, 288, 120, 240};    // Left sprite (frame 3)
+    SDL_Rect playerFrontClip = {29, 0, 70, 128};      // Front sprite
+    SDL_Rect playerLeftClip1 = {42, 256, 44, 128};    // Left sprite (frame 1)
+    SDL_Rect playerLeftClip2 = {169, 257, 60, 126};    // Left sprite (frame 2)
+    SDL_Rect playerLeftClip3 = {302, 257, 44, 129};    // Left sprite (frame 2)
+    SDL_Rect playerLeftClip4 = {426, 258, 60, 126};    // Left sprite (frame 3)
 
-    SDL_Rect playerRightClip1 = {552, 24, 104, 240};    // Right sprite (frame 1)
-    SDL_Rect playerRightClip2 = {688, 24, 120, 240};    // Right sprite (frame 2)
-    SDL_Rect playerRightClip3 = {840, 24, 120, 240};    // Right sprite (frame 3)
-    SDL_Rect playerBackClip = {32, 288, 128, 240};      // Back sprite
+    SDL_Rect playerRightClip1 = {40, 128, 44, 128};    // Right sprite (frame 1)
+    SDL_Rect playerRightClip2 = {166, 129, 60, 128};    // Right sprite (frame 2)
+    SDL_Rect playerRightClip3 = {303, 128, 45, 128};    // Right sprite (frame 2)
+    SDL_Rect playerRightClip4 = {423, 130, 60, 126};    // Right sprite (frame 3)
 
     player.spriteClips.push_back(playerFrontClip);
     player.spriteClips.push_back(playerLeftClip1);
     player.spriteClips.push_back(playerLeftClip2);
     player.spriteClips.push_back(playerLeftClip3);
+    player.spriteClips.push_back(playerLeftClip4);
     player.spriteClips.push_back(playerRightClip1);
     player.spriteClips.push_back(playerRightClip2);
     player.spriteClips.push_back(playerRightClip3);
-    player.spriteClips.push_back(playerBackClip);
+    player.spriteClips.push_back(playerRightClip4);
 
     // Initialize water textures
     water.spriteSheet = new TextureWrap(renderer, waterTexPath);
@@ -198,14 +200,14 @@ void gameDisplay::update(vector<object> objects, vector<bool> keys, bool grounde
 
               // Render the frame
               player.spriteSheet->render(player.getXPos(), player.getYPos() - camera.y,
-                                         &(player.spriteClips.at(4 + (player.frames[0][2] / ANIMATION_DELAY))));
+                                         &(player.spriteClips.at(5 + (player.frames[0][2] / ANIMATION_DELAY))));
 
               // Increment frame count for right direction
               player.frames[0][2]++;
               if (player.frames[0][2] / ANIMATION_DELAY >= player.frames[1][2])
                   player.frames[0][2] = 0;
           } else { //Right and in the air
-              player.spriteSheet->render(player.getXPos(), player.getYPos() - camera.y, &(player.spriteClips.at(4))); //make this the sprite for in the air moving right
+              player.spriteSheet->render(player.getXPos(), player.getYPos() - camera.y, &(player.spriteClips.at(5))); //make this the sprite for in the air moving right
           }
     }
     //STANDING STILL

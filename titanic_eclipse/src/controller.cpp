@@ -108,6 +108,13 @@ void Controller::run() {
 
 					if(activeScreen.getMenu() == start) {
 						//load level 1
+						/*object player = object(300, 400, 60, 128, 0.5);
+                        object door = object(900, 110, 40, 80, 0);
+                        object water = object(0, 900, 960, 690, 0);
+                        object platform = object(270, 600, 300, 10, 0);
+                        vector<object> platforms;
+                        platforms.push_back(platform);
+                        activeEngine = physicsEngine(player, door, water, platforms);*/
 						activeEngine = physicsEngine("level" + to_string(level) + ".txt");
 					}else if(activeScreen.getMenu() == win){
 						if(level == 5){

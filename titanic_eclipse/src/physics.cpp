@@ -149,23 +149,23 @@ physicsEngine::physicsEngine(const string level) {
 		getline(fileIn, x, '\t');
 		getline(fileIn, y, '\t');
 		getline(fileIn, width, '\t');
-		getline(fileIn, height, '\t');
+		getline(fileIn, height);
 		player = object(stod(x), stod(y), stod(width), stod(height), PLAYERGRAVITY);
 		getline(fileIn, x, '\t');
 		getline(fileIn, y, '\t');
 		getline(fileIn, width, '\t');
-		getline(fileIn, height, '\t');
+		getline(fileIn, height);
 		door = object(stod(x), stod(y), stod(width), stod(height), 0);
 		getline(fileIn, x, '\t');
 		getline(fileIn, y, '\t');
 		getline(fileIn, width, '\t');
-		getline(fileIn, height, '\t');
+		getline(fileIn, height);
 		water = object(stod(x), stod(y), stod(width), stod(height), 0);
 		platforms = vector<object>();
 		while (getline(fileIn, x, '\t')){
 			getline(fileIn, y, '\t');
 			getline(fileIn, width, '\t');
-			getline(fileIn, height, '\t');
+			getline(fileIn, height);
 			platforms.push_back(object(stod(x), stod(y), stod(width), stod(height), 0));
 		}
 
