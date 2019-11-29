@@ -108,11 +108,12 @@ void Controller::run() {
 
 					if(activeScreen.getMenu() == start) {
 						//load level 1
+						level = 1;															//reset level for new game
 						activeEngine = physicsEngine("level" + to_string(level) + ".txt"); //for loading in levels from a text file
 					}else if(activeScreen.getMenu() == win){
 						if(level == 5){														//if youve reached our current final level
 							activeScreen.setMenu(start);									//go back to start menu
-							level = 1;														//reset to level one
+							inmenu = true;
 						}else{
 							level++;														//beaten the level, so load up the next one
 							activeEngine = physicsEngine("level" + to_string(level) + ".txt");

@@ -238,7 +238,7 @@ void physicsEngine::updateObjects(const vector<bool> &keypresses) {
 			player.setGrounded(true);//only ground on floor hit, not ceiling hit
 			platforms.at(i).setPFC(platforms.at(i).getPFC() + 1);
 			if(platforms.at(i).getPFC() > FALLTHRESHOLD) {
-				platforms.at(i).setYSpeed(platforms.at(i).getYSpeed() + 0.3);
+				platforms.at(i).setYSpeed(platforms.at(i).getYSpeed() + 0.2);
 			}
 		}else if(temp[1] > movement[1] && movement[1] < 0){//hit a ceiling
 			movement[1] = temp[1];
