@@ -10,7 +10,20 @@
 const int WIDTH = 960;
 const int HEIGHT = 720;
 
+#ifdef WINDOWS
+    string prefix = "..\\titanic\\titanic_eclipse\\assets\\theme.wav";
+#else
+    string prefix = "../titanic_eclipse/assets/theme.wav";
+#endif
+
 int main(int argc, char *argv[]) {
+	//load theme
+	SDL_Init(SDL_INIT_AUDIO);
+	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
+	Mix_Music *gMusic = NULL;
+	gMusic = Mix_LoadMUS("./assets/theme.wav");
+	Mix_PlayMusic(gMusic, -1);
+
 	//main menu, initialization of objects, etc
 	Controller c(60, 60);
 	c.run();
