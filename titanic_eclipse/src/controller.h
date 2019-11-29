@@ -15,7 +15,7 @@ int main(int argc, char *argv[]);
 class Controller {
 public:
 	Controller(int fps, int tps);
-	void run();
+	void run();							//now also contains all menu information
 	vector<object> getVisibleObjects(const int&, const int&);
 	vector<bool> getKeyStates();
 	void getGraphicData();
