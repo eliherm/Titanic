@@ -44,8 +44,8 @@ Controller::Controller(int fps, int tps) {
 	this->inmenu = true;
 
 	try {
-        activeScreen = gameDisplay("titanic", WIDTH, HEIGHT);
-        activeScreen.setMenu(start);
+        activeScreen = gameDisplay("titanic", WIDTH, HEIGHT);	//generate the window
+        activeScreen.setMenu(start);							//starts off the game on the start menu
         keyboardIo = keyboardInput();
     } catch (SDLImgException& e) {
         cerr << e.what() << endl;
@@ -89,39 +89,32 @@ void Controller::run() {
 			t -= t_time;//if we run into issues or I have extra time we can use modulo here, but will need to have a system to track lost ticks and pass that info along to be dealt with properly
 			tcnt += 1;
 
-			if(!inmenu) {
-				if(activeEngine.getWinState()) {
-					activeScreen.setMenu(win);
-					inmenu = true;
-				} else if(activeEngine.getLoseState()){
-					activeScreen.setMenu(lose);
-					inmenu = true;
-				} else if(getKeyStates()[5]) {
-					activeScreen.setMenu(pause);
-					inmenu = true;
+			if(!inmenu) {										//when gameplay is occuring
+				if(activeEngine.getWinState()) {				//win condition(reach door)
+					activeScreen.setMenu(win);					//set win menu to active menu
+					inmenu = true;								//switch to menu view
+				} else if(activeEngine.getLoseState()){			//lose condition (hit water)
+					activeScreen.setMenu(lose);					//set lose menu to active menu
+					inmenu = true;								//switch to menu view
+				} else if(getKeyStates()[5]) {					//click escape (our acting pause button
+					activeScreen.setMenu(pause);				//set pause menu to active menu
+					inmenu = true;								//switch to menu view
 				} else {
-					doPhysics();
+					doPhysics();								//regular gameplay occuring, check whats going on
 				}
-			} else if(tcnt > 4){
+			} else if(tcnt > 4){								//for navigating on menu screen
 				if(!activeScreen.updateMenu(getKeyStates()) && !(activeScreen.getMenu() == quit)) {
 					inmenu = false;
 
 					if(activeScreen.getMenu() == start) {
 						//load level 1
-						/*object player = object(300, 400, 60, 128, 0.5);
-                        object door = object(900, 110, 40, 80, 0);
-                        object water = object(0, 900, 960, 690, 0);
-                        object platform = object(270, 600, 300, 10, 0);
-                        vector<object> platforms;
-                        platforms.push_back(platform);
-                        activeEngine = physicsEngine(player, door, water, platforms);*/
-						activeEngine = physicsEngine("level" + to_string(level) + ".txt");
+						activeEngine = physicsEngine("level" + to_string(level) + ".txt"); //for loading in levels from a text file
 					}else if(activeScreen.getMenu() == win){
-						if(level == 5){
-							activeScreen.setMenu(start);
-							level = 1;
+						if(level == 5){														//if youve reached our current final level
+							activeScreen.setMenu(start);									//go back to start menu
+							level = 1;														//reset to level one
 						}else{
-							level++;
+							level++;														//beaten the level, so load up the next one
 							activeEngine = physicsEngine("level" + to_string(level) + ".txt");
 						}
 					}
@@ -165,9 +158,5 @@ void Controller::doPhysics() {//to be implemented in the physics branch
 void Controller::doFrame() {//to be implemented in the view branch
 	if(!inmenu) {
 		activeScreen.update(getVisibleObjects(WIDTH, HEIGHT), getKeyStates(), activeEngine.getState()[0].isGrounded());
-	}/* else {
-		if(!activeScreen.updateMenu(getKeyStates())) {
-			inmenu = false;
-		}
-	}*/
+	}
 }
