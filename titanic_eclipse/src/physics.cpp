@@ -11,9 +11,10 @@
 #ifdef WINDOWS
     string prefix = "..\\titanic\\titanic_eclipse\\levels\\";
 #else
-    string prefix = "../titanic_eclipse/levels/";
+    string prefix = "./levels/";
 #endif
 const double PLAYERGRAVITY = 0.5, JUMPSPEED = 12, MAXRUNSPEED = 7, RUNACCELERATION = 0.6; //Originally: 0.5, 10, 2, 0.2
+const int FALLTHRESHOLD = 30; //platforms remains stable for FALLTHRESHOLD/60 seconds
 
 using namespace std;
 
@@ -38,6 +39,7 @@ object::object(const object& newval) {
 	height = newval.height;
 	gravity = newval.gravity;
 	grounded = newval.grounded;
+	platformfallctr = newval.platformfallctr;
 }
 
 object::object(const double& xpos, const double& ypos, const int& width, const int& height, const double& gravity) {
@@ -119,6 +121,14 @@ void object::setGrounded(const bool& newval) {
 	grounded = newval;
 }
 
+int object::getPFC() {
+	return this->platformfallctr;
+}
+
+void object::setPFC(const int& pfc) {
+	this->platformfallctr = pfc;
+}
+
 physicsEngine::physicsEngine(): win(false), lose(false) {}
 physicsEngine::physicsEngine(const object& player, const object& door, const object& water, const vector<object>& platforms) {
 	this->player = player;
@@ -131,7 +141,7 @@ physicsEngine::physicsEngine(const object& player, const object& door, const obj
 }
 
 physicsEngine::physicsEngine(const string level) {
-	ifstream fileIn("..\\titanic\\titanic_eclipse\\levels\\" + level);
+	ifstream fileIn(prefix + level);
 	if (fileIn.fail()) cout << "fail" << endl;
 		string x, y, width, height;
 		getline(fileIn, x, '\t');
@@ -224,10 +234,16 @@ void physicsEngine::updateObjects(const vector<bool> &keypresses) {
 			movement[1] = temp[1];
             player.setYSpeed(0);
 			player.setGrounded(true);//only ground on floor hit, not ceiling hit
+			platforms.at(i).setPFC(platforms.at(i).getPFC() + 1);
+			if(platforms.at(i).getPFC() > FALLTHRESHOLD) {
+				platforms.at(i).setYSpeed(platforms.at(i).getYSpeed() + 0.3);
+			}
 		}else if(temp[1] > movement[1] && movement[1] < 0){//hit a ceiling
 			movement[1] = temp[1];
 			player.setYSpeed(0);
 		}
+
+		platforms.at(i).addCoord(0, platforms.at(i).getYSpeed());
 
 		delete[] temp;
 	}
@@ -235,6 +251,9 @@ void physicsEngine::updateObjects(const vector<bool> &keypresses) {
 	//if no collisions, move object (before checking the next object), else compute collision behavior
     player.addCoord(movement[0], movement[1]);
 	delete[] movement;
+
+	//move water up screen
+	water.setCoord(water.getXCoord(), water.getYCoord() - 1);
 
 	//check door and water for win/loss
 	if(checkIntersection(player, door)){

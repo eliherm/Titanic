@@ -29,6 +29,8 @@ public:
     void setGrav(const double& newval);
     bool isGrounded();
     void setGrounded(const bool& newval);
+    int getPFC();
+    void setPFC(const int& pfc);
     // bool containsPoint(const double& x, const double& y);
 private:
     bool grounded = true;
@@ -38,6 +40,7 @@ private:
     int height;
     double xspeed;
     double yspeed;
+    int platformfallctr = 0;
     //double speed; //speed in pixels/s
     //double direction; //direction of movement in radii
     double gravity; //acceleration due to gravity in pixels/s^2

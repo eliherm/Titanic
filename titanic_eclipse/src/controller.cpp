@@ -1,6 +1,7 @@
 #include <iostream>
 #include <time.h>
 #include <SDL2/SDL.h>
+#include <SDL_mixer.h>
 #include <vector>
 #include "view.h"
 #include "physics.h"
@@ -10,18 +11,24 @@
 const int WIDTH = 960;
 const int HEIGHT = 720;
 
+/*
 #ifdef WINDOWS
-    string prefix = "..\\titanic\\titanic_eclipse\\assets\\theme.wav";
+    string musicpath = "..\\titanic\\titanic_eclipse\\assets\\theme.wav";
 #else
-    string prefix = "../titanic_eclipse/assets/theme.wav";
+    string musicpath = "./assets/theme.wav";
 #endif
+*/
 
 int main(int argc, char *argv[]) {
 	//load theme
 	SDL_Init(SDL_INIT_AUDIO);
 	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
 	Mix_Music *gMusic = NULL;
-	gMusic = Mix_LoadMUS("./assets/theme.wav");
+#ifdef WINDOWS
+	gMusic = Mix_LoadMUS("..\\titanic_eclipse\\assets\\theme.wav");
+#else
+	gMusic = Mix_LoadMUS("../titanic_eclipse/assets/theme.wav");
+#endif
 	Mix_PlayMusic(gMusic, -1);
 
 	//main menu, initialization of objects, etc
