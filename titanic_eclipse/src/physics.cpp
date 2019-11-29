@@ -1,4 +1,4 @@
-//#define WINDOWS
+#define WINDOWS
 
 /**
  * Source file for physics engine
@@ -15,7 +15,7 @@
 #else
     string prefix = "../titanic_eclipse/levels/";
 #endif
-const double PLAYERGRAVITY = 0.5, JUMPSPEED = 8, MAXRUNSPEED = 7, RUNACCELERATION = 0.6; //Originally: 0.5, 10, 2, 0.2
+const double PLAYERGRAVITY = 0.5, JUMPSPEED = 12, MAXRUNSPEED = 7, RUNACCELERATION = 0.6; //Originally: 0.5, 10, 2, 0.2
 const int FALLTHRESHOLD = 30; //platforms remains stable for FALLTHRESHOLD/60 seconds
 
 using namespace std;
