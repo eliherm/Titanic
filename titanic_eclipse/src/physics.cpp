@@ -1,4 +1,4 @@
-//#define WINDOWS
+#define WINDOWS
 
 /**
  * Source file for physics engine

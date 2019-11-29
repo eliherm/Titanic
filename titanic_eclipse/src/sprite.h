@@ -1,4 +1,4 @@
-//==#define WINDOWS //define the platform
+#define WINDOWS //define the platform
 
 #pragma once
 
