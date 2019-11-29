@@ -1,7 +1,7 @@
 #include <iostream>
 #include <time.h>
 #include <SDL2/SDL.h>
-#include <SDL_mixer.h>
+#include <SDL2/SDL_mixer.h>
 #include <vector>
 #include "view.h"
 #include "physics.h"
@@ -25,11 +25,13 @@ int main(int argc, char *argv[]) {
 	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
 	Mix_Music *gMusic = NULL;
 #ifdef WINDOWS
-	gMusic = Mix_LoadMUS("..\\titanic_eclipse\\assets\\theme.wav");
+	gMusic = Mix_LoadMUS("..\\titanic\\titanic_eclipse\\assets\\theme.wav");
 #else
 	gMusic = Mix_LoadMUS("../titanic_eclipse/assets/theme.wav");
 #endif
-	Mix_PlayMusic(gMusic, -1);
+	if(Mix_PlayMusic(gMusic, -1) == -1) {
+		printf("Mix_PlayMusic: %s\n", Mix_GetError());
+	}
 
 	//main menu, initialization of objects, etc
 	Controller c(60, 60);
