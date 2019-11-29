@@ -1,12 +1,17 @@
 #include <iostream>
 #include <time.h>
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_mixer.h>
 #include <vector>
 #include "view.h"
 #include "physics.h"
 #include "keyboardInput.h"
 #include "controller.h"
+
+#ifdef WINDOWS
+    #include <SDL2/SDL_mixer.h>
+#else
+    #include <SDL_mixer.h>
+#endif
 
 const int WIDTH = 960;
 const int HEIGHT = 720;
