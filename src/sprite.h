@@ -1,5 +1,3 @@
-#define WINDOWS //define the platform
-
 #pragma once
 
 #include <SDL2/SDL.h>

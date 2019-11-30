@@ -1,6 +1,3 @@
-/**
- * Header class for physics engine
- */
 #pragma once
 
 #include <vector>

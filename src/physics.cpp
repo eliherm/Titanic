@@ -1,8 +1,3 @@
-#define WINDOWS
-
-/**
- * Source file for physics engine
- */
 #include <cmath>
 #include <stdio.h>
 #include <vector>
@@ -11,10 +6,11 @@
 #include "physics.h"
 
 #ifdef WINDOWS
-    string prefix = "..\\titanic\\titanic_eclipse\\levels\\";
+    string prefix = "..\\assets\\levels\\";
 #else
-    string prefix = "../titanic_eclipse/levels/";
+    string prefix = "../assets/levels/";
 #endif
+
 const double PLAYERGRAVITY = 0.5, JUMPSPEED = 8, MAXRUNSPEED = 7, RUNACCELERATION = 0.6; //Originally: 0.5, 10, 2, 0.2
 const int FALLTHRESHOLD = 30; //platforms remains stable for FALLTHRESHOLD/60 seconds
 

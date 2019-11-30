@@ -20,17 +20,20 @@ int main(int argc, char *argv[]) {
 	//load theme
 	SDL_Init(SDL_INIT_AUDIO);
 	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
-	Mix_Music *gMusic = NULL;
+	Mix_Music *gMusic = nullptr;
+
 #ifdef WINDOWS
-	gMusic = Mix_LoadMUS("..\\titanic\\titanic_eclipse\\assets\\theme.wav");
+	gMusic = Mix_LoadMUS("..\\assets\\theme.wav");
 #else
-	gMusic = Mix_LoadMUS("../titanic_eclipse/assets/theme.wav");
+	gMusic = Mix_LoadMUS("../assets/theme.wav");
 #endif
-	if(Mix_PlayMusic(gMusic, -1) == -1) { //starts music with troubleshooting if music doesnt work
+
+    // starts music with troubleshooting if music doesnt work
+	if(Mix_PlayMusic(gMusic, -1) == -1) {
 		printf("Mix_PlayMusic: %s\n", Mix_GetError());
 	}
 
-	//main menu, initialization of objects, etc
+	// main menu, initialization of objects, etc
 	Controller c(60, 60);
 	c.run();
 	c.activeScreen.close();
@@ -148,9 +151,6 @@ vector<bool> Controller::getKeyStates() {//will not be void, this is simply a te
 	vector<bool> keyStates = keyboardIo.getKeyboardInput();
 	//check for escape keys that operate outside of normal gameplay, such as escape for pause menu (not yet implemented)
 	return keyStates;
-}
-
-void Controller::getGraphicData() {//not needed at the moment, but here for easy implementation if it's needed later
 }
 
 void Controller::doPhysics() {//to be implemented in the physics branch

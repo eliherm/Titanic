@@ -72,23 +72,23 @@ gameDisplay::gameDisplay(const string& windowName, const int& width, const int& 
 void gameDisplay::initTextures() {
     // Initialize the paths to textures
 #ifdef WINDOWS
-    string playerTexPath = "..\\titanic\\titanic_eclipse\\assets\\sailor-spritesheet.png";
-    	string waterTexPath = "..\\titanic\\titanic_eclipse\\assets\\water.png";
-    	string doorTexPath = "..\\titanic\\titanic_eclipse\\assets\\door.png";
-    	string platformsTexPath = "..\\titanic\\titanic_eclipse\\assets\\platform.png";
-    	string loseMenuImg = "..\\titanic\\titanic_eclipse\\assets\\menus\\lose-menu.png";
-    	string pauseMenuImg = "..\\titanic\\titanic_eclipse\\assets\\menus\\pause-menu.png";
-    	string startMenuImg = "..\\titanic\\titanic_eclipse\\assets\\menus\\start-menu.png";
-    	string winMenuImg = "..\\titanic\\titanic_eclipse\\assets\\menus\\win-menu.png";
+    string playerTexPath = "..\\assets\\sprites\\player.png";
+    string waterTexPath = "..\\assets\\sprites\\water.png";
+    string doorTexPath = "..\\assets\\sprites\\door.png";
+    string platformsTexPath = "..\\assets\\sprites\\platform.png";
+    string loseMenuImg = "..\\assets\\sprites\\menus\\lose-menu.png";
+    string pauseMenuImg = "..\\assets\\sprites\\menus\\pause-menu.png";
+    string startMenuImg = "..\\assets\\sprites\\menus\\start-menu.png";
+    string winMenuImg = "..\\assets\\sprites\\menus\\win-menu.png";
 #else
-    string playerTexPath = "../titanic_eclipse/assets/sailor-spritesheet.png";
-    string waterTexPath = "../titanic_eclipse/assets/water.png";
-    string doorTexPath = "../titanic_eclipse/assets/door.png";
-    string platformsTexPath = "../titanic_eclipse/assets/platform.png";
-    string loseMenuImg = "../titanic_eclipse/assets/menus/lose-menu.png";
-    string pauseMenuImg = "../titanic_eclipse/assets/menus/pause-menu.png";
-    string startMenuImg = "../titanic_eclipse/assets/menus/start-menu.png";
-    string winMenuImg = "../titanic_eclipse/assets/menus/win-menu.png";
+    string playerTexPath = "../assets/sprites/player.png";
+    string waterTexPath = "../assets/sprites/water.png";
+    string doorTexPath = "../assets/sprites/door.png";
+    string platformsTexPath = "../assets/sprites/platform.png";
+    string loseMenuImg = "../assets/sprites/menus/lose-menu.png";
+    string pauseMenuImg = "../assets/sprites/menus/pause-menu.png";
+    string startMenuImg = "../assets/sprites/menus/start-menu.png";
+    string winMenuImg = "../assets/sprites/menus/win-menu.png";
 #endif
 
     // Setting player, water, and door dimensions
@@ -140,8 +140,6 @@ void gameDisplay::initTextures() {
 
     // Initialize platforms
     platforms.spriteSheet = new TextureWrap(renderer, platformsTexPath);
-//    SDL_Rect platform1 = {192, 0, 64, 19};
-//    platforms.spriteClips.push_back(platform1);
 
     // Initialize menu sprite sheets
     losemenu.spriteSheet = new TextureWrap(renderer, loseMenuImg);
