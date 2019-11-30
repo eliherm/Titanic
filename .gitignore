@@ -31,24 +31,11 @@
 *.out
 *.app
 
-# CMake files
+# Debug files
 cmake-build-debug/
-CMakeLists.txt
-*.cmake
 
 # MacOS Finder preferences
 .DS_Store
 
 # CLion preferences
 .idea/
-
-# Eclipse preferences
-bin/
-.metadata/
-.classpath
-.project
-.settings/
-.cproject
-.buildpath
-/Debug/
-/Release/
