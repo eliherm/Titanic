@@ -109,7 +109,7 @@ void Controller::run() {
 					if(activeScreen.getMenu() == start) {
 						//load level 1
 						//this is TEMPORARILY commented out for the sake of the presentation, to save time if we die by mistake
-						//level = 1;															//reset level for new game
+						level = 1;															//reset level for new game
 						activeEngine = physicsEngine("level" + to_string(level) + ".txt"); //for loading in levels from a text file
 					}else if(activeScreen.getMenu() == win){
 						if(level == 5){														//if youve reached our current final level
