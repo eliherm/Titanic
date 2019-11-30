@@ -1,8 +1,7 @@
-#include <SDL2/SDL.h>
 #include <iostream>
+#include <SDL2/SDL.h>
 #include <utility>
 #include <vector>
-#include <iostream>
 
 // Include the SDL image header based on the platform
 #ifdef WINDOWS
@@ -15,7 +14,7 @@
 #include "sdlException.h"
 using namespace std;
 
-#define ANIMATION_DELAY 10  // Controls how fast frames are rendered in an animation cycle
+#define ANIMATION_DELAY 5  // Controls how fast frames are rendered in an animation cycle
 
 gameDisplay::gameDisplay(): WIDTH(0), HEIGHT(0), window(nullptr),
 		renderer(nullptr), camera({0, 0, WIDTH, HEIGHT}), menuState(start), optionSelected(0) {}
@@ -113,14 +112,14 @@ void gameDisplay::initTextures() {
     // Set sprite clips for the player
     SDL_Rect playerFrontClip = {29, 0, 70, 128};      // Front sprite
     SDL_Rect playerLeftClip1 = {42, 256, 44, 128};    // Left sprite (frame 1)
-    SDL_Rect playerLeftClip2 = {169, 257, 60, 126};    // Left sprite (frame 2)
-    SDL_Rect playerLeftClip3 = {302, 257, 44, 129};    // Left sprite (frame 2)
-    SDL_Rect playerLeftClip4 = {426, 258, 60, 126};    // Left sprite (frame 3)
+    SDL_Rect playerLeftClip2 = {169, 257, 60, 126};   // Left sprite (frame 2)
+    SDL_Rect playerLeftClip3 = {302, 257, 44, 129};   // Left sprite (frame 2)
+    SDL_Rect playerLeftClip4 = {426, 258, 60, 126};   // Left sprite (frame 3)
 
     SDL_Rect playerRightClip1 = {40, 128, 44, 128};    // Right sprite (frame 1)
-    SDL_Rect playerRightClip2 = {166, 129, 60, 128};    // Right sprite (frame 2)
-    SDL_Rect playerRightClip3 = {303, 128, 45, 128};    // Right sprite (frame 2)
-    SDL_Rect playerRightClip4 = {423, 130, 60, 126};    // Right sprite (frame 3)
+    SDL_Rect playerRightClip2 = {166, 129, 60, 128};   // Right sprite (frame 2)
+    SDL_Rect playerRightClip3 = {303, 128, 45, 128};   // Right sprite (frame 2)
+    SDL_Rect playerRightClip4 = {423, 130, 60, 126};   // Right sprite (frame 3)
 
     player.spriteClips.push_back(playerFrontClip);
     player.spriteClips.push_back(playerLeftClip1);
@@ -152,9 +151,9 @@ void gameDisplay::initTextures() {
 
 void gameDisplay::update(vector<Object> objects, vector<bool> keys, bool grounded) {
 	// Update objects
-	player.setPos(objects.at(0).getXCoord(), objects.at(0).getYCoord());
-    door.setPos(objects.at(1).getXCoord(), objects.at(1).getYCoord());
-    water.setPos(0, objects.at(2).getYCoord());
+	player.setPos(static_cast<int>(objects.at(0).getXCoord()), static_cast<int>(objects.at(0).getYCoord()));
+    door.setPos(static_cast<int>(objects.at(1).getXCoord()), static_cast<int>(objects.at(1).getYCoord()));
+    water.setPos(0,static_cast<int>( objects.at(2).getYCoord()));
 
 	// Update camera location to the center of the player in the y-axis
 	camera.y = (player.getYPos() + player.getHeight() / 2) - HEIGHT / 2;
@@ -168,7 +167,7 @@ void gameDisplay::update(vector<Object> objects, vector<bool> keys, bool grounde
 
 	// Draw platforms
 	for (int i = 3; i < objects.size(); i++) {
-        platforms.spriteSheet->render(objects.at(i).getXCoord(), objects.at(i).getYCoord() - camera.y, nullptr);
+        platforms.spriteSheet->render(static_cast<int>(objects.at(i).getXCoord()), static_cast<int>(objects.at(i).getYCoord() - camera.y), nullptr);
 	}
 
     // Render player with animation
@@ -188,7 +187,7 @@ void gameDisplay::update(vector<Object> objects, vector<bool> keys, bool grounde
             if (player.frames[0][1] / ANIMATION_DELAY >= player.frames[1][1])
                 player.frames[0][1] = 0;
         } else { // left and in the air
-            player.spriteSheet->render(player.getXPos(), player.getYPos() - camera.y, &(player.spriteClips.at(1))); //make this the sprite for in the air moving left
+            player.spriteSheet->render(player.getXPos(), player.getYPos() - camera.y, &(player.spriteClips.at(1)));
         }
     }
     //RIGHT
@@ -207,7 +206,7 @@ void gameDisplay::update(vector<Object> objects, vector<bool> keys, bool grounde
               if (player.frames[0][2] / ANIMATION_DELAY >= player.frames[1][2])
                   player.frames[0][2] = 0;
           } else { //Right and in the air
-              player.spriteSheet->render(player.getXPos(), player.getYPos() - camera.y, &(player.spriteClips.at(5))); //make this the sprite for in the air moving right
+              player.spriteSheet->render(player.getXPos(), player.getYPos() - camera.y, &(player.spriteClips.at(5)));
           }
     }
     //STANDING STILL

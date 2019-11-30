@@ -127,19 +127,19 @@ void Controller::run() {
  * that window.
  * */
 vector<Object> Controller::getVisibleObjects(const int& width, const int& height) const {
-	vector<Object> all = activeEngine.getState();
+	vector<Object> objects = activeEngine.getState();
 	vector<Object> visible;
-	double playerX = all.at(0).getXCoord() + all.at(0).getWidth() / static_cast<double>(2);
-    double playerY = all.at(0).getYCoord() + all.at(0).getHeight() / static_cast<double>(2);
+	double playerX = objects.at(0).getXCoord() + objects.at(0).getWidth() / static_cast<double>(2);
+    double playerY = objects.at(0).getYCoord() + objects.at(0).getHeight() / static_cast<double>(2);
 
-	for (const auto &temp : all) {
+	for (const auto &object : objects) {
         // checks each object against the borders of the screen.
         // if we notice latency issues and fps > tps, it might be worth moving this into getState
-        if ((temp.getXCoord() <= playerX + WIDTH / static_cast<double>(2)
-            || temp.getXCoord() + temp.getWidth() >= playerX - WIDTH / static_cast<double>(2))
-            && (temp.getYCoord() <= playerY + HEIGHT / static_cast<double>(2)
-            || temp.getYCoord() + temp.getHeight() >= playerY - HEIGHT / static_cast<double>(2))) {
-                visible.push_back(temp);
+        if ((object.getXCoord() <= playerX + WIDTH / static_cast<double>(2)
+            || object.getXCoord() + object.getWidth() >= playerX - WIDTH / static_cast<double>(2))
+            && (object.getYCoord() <= playerY + HEIGHT / static_cast<double>(2)
+            || object.getYCoord() + object.getHeight() >= playerY - HEIGHT / static_cast<double>(2))) {
+                visible.push_back(object);
         }
 	}
 

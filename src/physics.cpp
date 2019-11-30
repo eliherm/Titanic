@@ -177,7 +177,7 @@ void PhysicsEngine::updateObjects(const vector<bool>& keypresses) {
 	movement[0] = player.getXSpeed();
 	movement[1] = player.getYSpeed();
 
-	for (auto platform : platforms) {
+	for (auto &platform : platforms) {
         double* temp = getMaxVector(player, platform);
         if (abs(temp[0]) < abs(movement[0])) {
             // Wall hit, x vector is closer to 0
@@ -190,10 +190,12 @@ void PhysicsEngine::updateObjects(const vector<bool>& keypresses) {
             movement[1] = temp[1];
             player.setYSpeed(0);
             player.setGrounded(true);   // Only ground on floor hit, not ceiling hit
-            platform.setPFC(platform.getPFC() + 1);
 
+            /*
+            platform.setPFC(platform.getPFC() + 1);
             if (platform.getPFC() > FALL_THRESHOLD)
                 platform.setYSpeed(platform.getYSpeed() + 0.2);
+            */
         } else if (temp[1] > movement[1] && movement[1] < 0) {
             // Ceiling hit
             movement[1] = temp[1];

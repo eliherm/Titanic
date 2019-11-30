@@ -2,61 +2,55 @@
 #include "view.h"
 #include "sdlException.h"
 
-// Include the SDL image header based on the platform
 #ifdef WINDOWS
     #include <SDL2/SDL_image.h>
 #else
     #include <SDL_image.h>
 #endif
 
-sprite::sprite() { //initialize all variables
-    this->xcoord = 0;
-    this->ycoord = 0;
-    this->width = 0;
-    this->height = 0;
-    this->spriteSheet = nullptr;
-}
-
-sprite::sprite(const int &xpos, const int &ypos, const int &width, const int &height) { //setting all variables
-    this->xcoord = xpos;
-    this->ycoord = ypos;
+Sprite::Sprite() : xcoord(0), ycoord(0), width(0), height(0), spriteSheet(nullptr) {}
+Sprite::Sprite(const int &xpos, const int &ypos, const int &width, const int &height) {
+    xcoord = xpos;
+    ycoord = ypos;
     this->width = width;
     this->height = height;
-    this->spriteSheet = nullptr;
+    spriteSheet = nullptr;
 }
 
-void sprite::setDim(const int& wdth, const int& hght) { //setting specific dimensions
-    this->width = wdth;
-    this->height = hght;
+// Set sprite dimensions
+void Sprite::setDim(const int& wdth, const int& hght) {
+    width = wdth;
+    height = hght;
 }
 
-void sprite::setPos(const int &xpos, const int &ypos) { //setting specific position
+// Set sprite position
+void Sprite::setPos(const int &xpos, const int &ypos) {
     xcoord = xpos;
     ycoord = ypos;
 }
 
 // Initializes a sprite with animation information
-void sprite::enableAnimation(const vector<vector<int>>& framesInfo) {
+void Sprite::enableAnimation(const vector<vector<int>>& framesInfo) {
     frames = vector<vector<int>>(framesInfo);
 }
 
 // Sprite Accessors
-int sprite::getWidth() const { return this->width; }
-int sprite::getHeight() const { return this->height; }
-int sprite::getXPos() const { return this->xcoord; }
-int sprite::getYPos() const { return this->ycoord; }
+int Sprite::getWidth() const { return width; }
+int Sprite::getHeight() const { return height; }
+int Sprite::getXPos() const { return xcoord; }
+int Sprite::getYPos() const { return ycoord; }
 
-
-TextureWrap::TextureWrap(SDL_Renderer* renderer, const string& path) : renderer(renderer), imgWidth(0), imgHeight(0) { //first time giving an item a texture
+TextureWrap::TextureWrap(SDL_Renderer* renderer, const string& path) : renderer(renderer), imgWidth(0), imgHeight(0) {
     mainTexture =nullptr;
     loadFromFile(path);
 }
 
-TextureWrap::~TextureWrap() { //destructor
+TextureWrap::~TextureWrap() {
     free();
 }
 
-void TextureWrap::loadFromFile(const string& path) { // how to set new texture
+// Loads an image into the texture
+void TextureWrap::loadFromFile(const string& path) {
     // Get rid of preexisting texture
     free();
 
@@ -70,7 +64,7 @@ void TextureWrap::loadFromFile(const string& path) { // how to set new texture
     }
 
     // Color key image
-    SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0xFF, 0xFF, 0xFF));
+    //SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0xFF, 0xFF, 0xFF));
 
     // Create texture from surface pixels
     newTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);

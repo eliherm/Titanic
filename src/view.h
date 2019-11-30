@@ -1,6 +1,5 @@
 #pragma once
 
-#include <SDL2/SDL.h>
 #include <string>
 #include <vector>
 #include "physics.h"
@@ -14,6 +13,7 @@ public:
     gameDisplay();                                                                  // Initialize null objects
     gameDisplay(const string& windowName, const int& wdth, const int& hght);        // Constructor
     void update(vector<Object> objects, vector<bool> keys, bool grounded);          // Updates all objects
+
     void setMenu(const menuStateType& menu);
     menuStateType getMenu();
     bool updateMenu(vector<bool> keys);
@@ -29,16 +29,16 @@ private:
 	SDL_Renderer* renderer; // Main renderer
 
 	// Game sprites
-    sprite player;
-    sprite water;
-	sprite door;
-	sprite platforms;
+    Sprite player;
+    Sprite water;
+	Sprite door;
+	Sprite platforms;
 
 	// Menu sprites
-	sprite losemenu;
-	sprite pausemenu;
-	sprite startmenu;
-	sprite winmenu;
+	Sprite losemenu;
+	Sprite pausemenu;
+	Sprite startmenu;
+	Sprite winmenu;
 
     SDL_Rect camera;  // Rectangle to track player movement in the level
 

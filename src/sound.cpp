@@ -22,7 +22,7 @@ Sound::Sound() {
         bgMusicPath = "../assets/theme.wav";
 #endif
 
-        // Load the background music
+        // Load the music files
         bgMusic = Mix_LoadMUS(bgMusicPath.c_str());
         if (bgMusic == nullptr) {
             throw SDLMixException("Unable to load file '" + bgMusicPath + "'");

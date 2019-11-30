@@ -8,8 +8,8 @@ using namespace std;
 
 class TextureWrap {
 public:
-    explicit TextureWrap(SDL_Renderer* renderer, const string& path);   // Constructor
-    ~TextureWrap();                                                     // Destructor
+    explicit TextureWrap(SDL_Renderer* renderer, const string& path);
+    ~TextureWrap();
 
     // Loads image at specified path
     void loadFromFile(const string& path);
@@ -17,7 +17,7 @@ public:
     // Renders texture at given point
     void render(const int& x, const int& y, SDL_Rect* clip = nullptr) const;
 private:
-    void free();    // Deallocates textures
+    void free();    // De-allocates textures
 
     SDL_Texture* mainTexture;
     SDL_Renderer* renderer;
@@ -27,10 +27,10 @@ private:
     int imgHeight;
 };
 
-class sprite {
+class Sprite {
 public:
-    sprite();
-    sprite(const int& xpos, const int& ypos, const int& width, const int& height);
+    Sprite();
+    Sprite(const int& xpos, const int& ypos, const int& width, const int& height);
     void setPos(const int& xpos, const int& ypos);
     void setDim(const int& wdth, const int& hght);
     void enableAnimation(const vector<vector<int>>& framesInfo);
@@ -42,9 +42,7 @@ public:
 
     TextureWrap* spriteSheet;
     vector<SDL_Rect> spriteClips;
-
-    // Holds frame information for animation
-    vector<vector<int>> frames;
+    vector<vector<int>> frames; // Holds frame information for animation
 private:
     int xcoord;
     int ycoord;
