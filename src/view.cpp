@@ -2,7 +2,6 @@
 #include <iostream>
 #include <utility>
 #include <vector>
-#include "view.h"
 #include <iostream>
 
 // Include the SDL image header based on the platform
@@ -11,6 +10,9 @@
 #else
     #include <SDL_image.h>
 #endif
+
+#include "view.h"
+#include "sdlException.h"
 using namespace std;
 
 #define ANIMATION_DELAY 10  // Controls how fast frames are rendered in an animation cycle
@@ -148,7 +150,7 @@ void gameDisplay::initTextures() {
     winmenu.spriteSheet = new TextureWrap(renderer, winMenuImg);
 }
 
-void gameDisplay::update(vector<object> objects, vector<bool> keys, bool grounded) {
+void gameDisplay::update(vector<Object> objects, vector<bool> keys, bool grounded) {
 	// Update objects
 	player.setPos(objects.at(0).getXCoord(), objects.at(0).getYCoord());
     door.setPos(objects.at(1).getXCoord(), objects.at(1).getYCoord());
@@ -228,7 +230,7 @@ menuStateType gameDisplay::getMenu() {
 	return this->menuState;
 }
 
-//returns false if we're leaving the menu system, otherwise true
+// returns false if we're leaving the menu system, otherwise true
 bool gameDisplay::updateMenu(vector<bool> keys) {
 	// Clear screen
 	SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
@@ -237,19 +239,19 @@ bool gameDisplay::updateMenu(vector<bool> keys) {
 	int arrowy;
 
 	if(menuState == start) {
-		if(keys[0]) { //up
+		if(keys.at(0)) { //up
 			if(optionSelected == 0) {
 				optionSelected = 1; //goto quit option
 			} else if(optionSelected == 1) { //goto start game option
 				optionSelected--;
 			}
-		} else if(keys[1]) { //down
+		} else if(keys.at(1)) { //down
 			if(optionSelected == 1) { //goto start game option
 				optionSelected = 0;
 			} else if(optionSelected == 0) { //goto quit option
 				optionSelected++;
 			}
-		} else if(keys[6]) { //enter
+		} else if(keys.at(5)) { //enter
 			if(optionSelected == 0) { //start the game
 				return false;
 			} else if(optionSelected == 1) {
@@ -275,19 +277,19 @@ bool gameDisplay::updateMenu(vector<bool> keys) {
 		SDL_RenderDrawLine(renderer, arrowx + 20, arrowy + 20, arrowx, arrowy + 40);
 
 	} else if(menuState == pause) {
-		if(keys[0]) { //up
+		if(keys.at(0)) { //up
 				if(optionSelected == 0) { //goto quit
 					optionSelected = 2;
 				} else {
 					optionSelected--;
 				}
-		} else if(keys[1]) { //down
+		} else if(keys.at(1)) { //down
 			if(optionSelected == 2) { //goto continue
 				optionSelected = 0;
 			} else {
 				optionSelected++;
 			}
-		} else if(keys[6]) { //space
+		} else if(keys.at(5)) { //enter
 			 if(optionSelected == 0) { //return to the game
 				 return false;
 			 } else if(optionSelected == 1) { //return to the menu
@@ -317,7 +319,7 @@ bool gameDisplay::updateMenu(vector<bool> keys) {
 		SDL_RenderDrawLine(renderer, arrowx, arrowy, arrowx + 20, arrowy + 20);
 		SDL_RenderDrawLine(renderer, arrowx + 20, arrowy + 20, arrowx, arrowy + 40);
 	} else if(menuState == win) {
-		if(keys[6]) { //enter
+		if(keys.at(5)) { //enter
 			//menuState = start; //for demo purposes return home
 			return false;
 		}
@@ -329,7 +331,7 @@ bool gameDisplay::updateMenu(vector<bool> keys) {
 		SDL_RenderDrawLine(renderer, 280, 380, 300, 400);
 		SDL_RenderDrawLine(renderer, 300, 400, 280, 420);
 	} else { //lose
-		if(keys[6]) { //enter
+		if(keys.at(5)) { //enter
 			menuState = start;
 			return true;
 		}
@@ -374,17 +376,6 @@ void gameDisplay::close() {
     window = nullptr;
 
     // Quit SDL subsystems
+    IMG_Quit();
     SDL_Quit();
-}
-
-SDLException::SDLException(string msg): errMsg(move(msg)) {}
-string& SDLException::what() {
-    errMsg += "\nSDL Error: " + static_cast<string>(SDL_GetError());
-    return errMsg;
-}
-
-SDLImgException::SDLImgException(string msg): errMsg(move(msg)) {}
-string& SDLImgException::what() {
-    errMsg += "\nSDL_image Error: " + static_cast<string>(IMG_GetError());
-    return errMsg;
 }

@@ -3,63 +3,69 @@
 #include <vector>
 using namespace std;
 
-class object {
+class Object {
 public:
-    object();
-    object(const double& xpos, const double& ypos, const int& width, const int& height, const double& gravity);
-    object(const object&);
-    double getXCoord();
-    double getYCoord();
+    Object();
+    Object(const double& xpos, const double& ypos, const int& width, const int& height, const double& gravity);
+    Object(const Object&);
+
     void setCoord(const double& newx, const double& newy);
     void addCoord(const double& newx, const double& newy);
-    int getWidth();
-    int getHeight();
+    double getXCoord() const;
+    double getYCoord() const;
+
     void setWidth(const int& newval);
     void setHeight(const int& newval);
-    double getXSpeed();
+    int getWidth() const;
+    int getHeight() const;
+
     void setXSpeed(const double& newval);
     void addXSpeed(const double& newval);
-    double getYSpeed();
+    double getXSpeed() const;
+
     void setYSpeed(const double& newval);
     void addYSpeed(const double& newval);
-    double getGrav();
+    double getYSpeed() const;
+
     void setGrav(const double& newval);
-    bool isGrounded();
+    double getGrav() const;
+
     void setGrounded(const bool& newval);
-    int getPFC();
+    bool isGrounded() const;
+
     void setPFC(const int& pfc);
-    // bool containsPoint(const double& x, const double& y);
+    int getPFC() const;
 private:
-    bool grounded = true;
     double xcoord;
     double ycoord;
     int width;
     int height;
     double xspeed;
     double yspeed;
-    int platformfallctr = 0;
-    //double speed; //speed in pixels/s
-    //double direction; //direction of movement in radii
-    double gravity; //acceleration due to gravity in pixels/s^2
+    bool grounded;
+    int platformfallctr;
+    double gravity; // Acceleration due to gravity in pixels / s^2
 };
 
-class physicsEngine {
+class PhysicsEngine {
 public:
-	physicsEngine();
-	physicsEngine(const string level);
-    physicsEngine(const object& player, const object& door, const object& water,const vector<object>& platforms);
-    void updateObjects(const vector<bool> &keypresses); //needs to take whatever the data format for key press input is
-    vector<object> getState();
-    bool checkIntersection(object obj1, object obj2);
-    double* getMaxVector(object obj1, object obj2);
-    bool getWinState();
-    bool getLoseState();
+	PhysicsEngine();
+    PhysicsEngine(const Object& player, const Object& door, const Object& water,const vector<Object>& platforms);
+	explicit PhysicsEngine(const string& level);
+
+    void updateObjects(const vector<bool>& keypresses);
+    vector<Object> getState() const;
+    bool getWinState() const;
+    bool getLoseState() const;
 private:
-    object player;
-    object door;
-    object water;
-    vector<object> platforms;
+    bool checkIntersection(const Object& obj1, const Object& obj2) const;
+    double* getMaxVector(const Object& obj1, const Object& obj2) const;
 
     bool win;
     bool lose;
+
+    Object player;
+    Object door;
+    Object water;
+    vector<Object> platforms;
 };

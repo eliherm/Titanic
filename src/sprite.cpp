@@ -1,5 +1,6 @@
 #include "sprite.h"
 #include "view.h"
+#include "sdlException.h"
 
 // Include the SDL image header based on the platform
 #ifdef WINDOWS

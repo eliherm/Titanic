@@ -1,16 +1,21 @@
 #pragma once
 
-#include <SDL2/SDL.h>
-#include <string>
 #include <vector>
-
 using namespace std;
 
-class keyboardInput {
+class KeyboardInput {
 public:
-    explicit keyboardInput();
+    explicit KeyboardInput();
     vector<bool> getKeyboardInput();
 
-private:					// {0,   1,    2     3       4      5   }
-    vector<bool> keyStates; // {up, down, left, right, space, escape}
+private:
+    /*
+     * Index 0 -> Up
+     * Index 1 -> Down
+     * Index 2 -> Left
+     * Index 3 -> Right
+     * Index 4 -> Escape
+     * Index 5 -> Return
+     */
+    vector<bool> keyStates;
 };

@@ -1,67 +1,35 @@
+#include <SDL2/SDL.h>
+#include <iostream>
 #include "keyboardInput.h"
 
-keyboardInput::keyboardInput() { //on start, the keys will be initialized to false, but will never be forced back to false to avoid rapid switching
-    for (int i = 0; i < 8; i++) {
+KeyboardInput::KeyboardInput() {
+    // Initialize key states to false
+    for (int i = 0; i < 7; i++) {
         keyStates.push_back(false);
     }
 }
 
-vector<bool> keyboardInput::getKeyboardInput() { //called by controller, to check current key states
+vector<bool> KeyboardInput::getKeyboardInput() {
     const Uint8* currentKeyStates = SDL_GetKeyboardState(nullptr); // Check if a key was pressed
 
-    //UP
-    if (currentKeyStates[ SDL_SCANCODE_UP ] || currentKeyStates[ SDL_SCANCODE_W ]) { //if either of the relevant keys for the direction are pressed
-        keyStates[0] = true; //set the subsequent index to true
-    } else {
-        keyStates[0] = false; //set the subsequent index to false
-    }
+    // Up
+    keyStates.at(0) = (currentKeyStates[ SDL_SCANCODE_UP ] || currentKeyStates[ SDL_SCANCODE_W ] ||
+            currentKeyStates[ SDL_SCANCODE_SPACE ]);
 
-    //DOWN
-    if (currentKeyStates[ SDL_SCANCODE_DOWN ] || currentKeyStates[ SDL_SCANCODE_S ]) {
-        keyStates[1] = true;
-    } else {
-        keyStates[1] = false;
-    }
+    // Down
+    keyStates.at(1) = (currentKeyStates[ SDL_SCANCODE_DOWN ] || currentKeyStates[ SDL_SCANCODE_S ]);
 
-    //LEFT
-    if (currentKeyStates[ SDL_SCANCODE_LEFT ] || currentKeyStates[ SDL_SCANCODE_A ]) {
-        keyStates[2] = true;
-    } else {
-        keyStates[2] = false;
-    }
+    // Left
+    keyStates.at(2) = (currentKeyStates[ SDL_SCANCODE_LEFT ] || currentKeyStates[ SDL_SCANCODE_A ]);
 
-    //RIGHT
-    if (currentKeyStates[ SDL_SCANCODE_RIGHT ] || currentKeyStates[ SDL_SCANCODE_D ]) {
-        keyStates[3] = true;
-    } else {
-        keyStates[3] = false;
-    }
+    // Right
+    keyStates.at(3) = (currentKeyStates[ SDL_SCANCODE_RIGHT ] || currentKeyStates[ SDL_SCANCODE_D ]);
 
-    //SPACE
-    if (currentKeyStates[ SDL_SCANCODE_SPACE ]) {
-        keyStates[4] = true;
-    } else {
-        keyStates[4] = false;
-    }
+    // Escape
+    keyStates.at(4) = currentKeyStates[ SDL_SCANCODE_ESCAPE ];
 
-    //ESCAPE
-    if (currentKeyStates[ SDL_SCANCODE_ESCAPE ]) {
-        keyStates[5] = true;
-    } else {
-        keyStates[5] = false;
-    }
+    // Return
+    keyStates.at(5) = currentKeyStates[ SDL_SCANCODE_RETURN ];
 
-    if (currentKeyStates[ SDL_SCANCODE_ESCAPE ]) {
-          keyStates[5] = true;
-      } else {
-          keyStates[5] = false;
-      }
-
-    if (currentKeyStates[ SDL_SCANCODE_RETURN ]) {
-          keyStates[6] = true;
-      } else {
-          keyStates[6] = false;
-      }
-
-    return keyStates; //return the vector with the updated boolean values
+    return keyStates;
 }

@@ -13,7 +13,7 @@ class gameDisplay {
 public:
     gameDisplay();                                                                  // Initialize null objects
     gameDisplay(const string& windowName, const int& wdth, const int& hght);        // Constructor
-    void update(vector<object> objects, vector<bool> keys, bool grounded);          // Updates all objects
+    void update(vector<Object> objects, vector<bool> keys, bool grounded);          // Updates all objects
     void setMenu(const menuStateType& menu);
     menuStateType getMenu();
     bool updateMenu(vector<bool> keys);
@@ -45,21 +45,4 @@ private:
     // Menu variables
     menuStateType menuState;
     int optionSelected;
-};
-
-// Handles SDL exceptions
-class SDLException: public exception {
-public:
-    explicit SDLException(string msg);
-    string& what(); // Reports the error message
-private:
-    string errMsg;
-};
-
-class SDLImgException: public exception {
-public:
-    explicit SDLImgException(string msg);
-    string& what(); // Reports the error message
-private:
-    string errMsg;
 };
