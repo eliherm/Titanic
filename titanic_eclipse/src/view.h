@@ -1,43 +1,26 @@
-/**
- * Header for view classes
- */
-
 #pragma once
 
 #include <SDL2/SDL.h>
 #include <string>
 #include <vector>
 #include "physics.h"
+#include "sprite.h"
 using namespace std;
 
-class sprite {
-public:
-	sprite();
-	sprite(const int& xpos, const int& ypos, const int& width, const int& height);
-	void setPos(const int& xpos, const int& ypos);
-	void setDim(const int& width, const int& height);
-
-	int getWidth() const;
-	int getHeight() const;
-	int getXPos() const;
-	int getYPos() const;
-
-private:
-	int xcoord;
-	int ycoord;
-	int width;
-	int height;
-};
+enum menuStateType { start, pause, win, lose, quit };   // Enumerates the different types of menus
 
 class gameDisplay {
 public:
-    gameDisplay();  // unusable, only for initial null objects
-	gameDisplay(const string& windowName, const int& hght, const int& wdth);
-	void levelInit(const int& doorX, const int& doorY);
-	void update(vector<object> objects, bool win, bool lose);
-	void close();
-
+    gameDisplay();                                                                  // Initialize null objects
+    gameDisplay(const string& windowName, const int& wdth, const int& hght);        // Constructor
+    void update(vector<object> objects, vector<bool> keys, bool grounded);          // Updates all objects
+    void setMenu(const menuStateType& menu);
+    menuStateType getMenu();
+    bool updateMenu(vector<bool> keys);
+    void close();                                                                   // Free up resources
 private:
+    void initTextures();                                                            // Initializes textures
+
     // Main window
 	SDL_Window* window;
 	int WIDTH;
@@ -45,16 +28,29 @@ private:
 
 	SDL_Renderer* renderer; // Main renderer
 
-	// Sprites
+	// Game sprites
+    sprite player;
+    sprite water;
 	sprite door;
-	sprite player;
-	sprite water;
+	sprite platforms;
+
+	// Menu sprites
+	sprite losemenu;
+	sprite pausemenu;
+	sprite startmenu;
+	sprite winmenu;
+
+    SDL_Rect camera;  // Rectangle to track player movement in the level
+
+    // Menu variables
+    menuStateType menuState;
+    int optionSelected;
 };
 
 // Handles SDL exceptions
 class SDLException: public exception {
 public:
-    explicit SDLException(string  msg);
+    explicit SDLException(string msg);
     string& what(); // Reports the error message
 private:
     string errMsg;
@@ -62,7 +58,7 @@ private:
 
 class SDLImgException: public exception {
 public:
-    explicit SDLImgException(string  msg);
+    explicit SDLImgException(string msg);
     string& what(); // Reports the error message
 private:
     string errMsg;

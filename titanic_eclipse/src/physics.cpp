@@ -1,3 +1,5 @@
+#define WINDOWS
+
 /**
  * Source file for physics engine
  */
@@ -5,9 +7,16 @@
 #include <stdio.h>
 #include <vector>
 #include <iostream>
+#include <fstream>
 #include "physics.h"
 
-const double PLAYERGRAVITY = 0.5, JUMPSPEED = 10, MAXRUNSPEED = 2, RUNACCELERATION = 0.2;
+#ifdef WINDOWS
+    string prefix = "..\\titanic\\titanic_eclipse\\levels\\";
+#else
+    string prefix = "../titanic_eclipse/levels/";
+#endif
+const double PLAYERGRAVITY = 0.5, JUMPSPEED = 8, MAXRUNSPEED = 7, RUNACCELERATION = 0.6; //Originally: 0.5, 10, 2, 0.2
+const int FALLTHRESHOLD = 30; //platforms remains stable for FALLTHRESHOLD/60 seconds
 
 using namespace std;
 
@@ -31,6 +40,8 @@ object::object(const object& newval) {
 	width = newval.width;
 	height = newval.height;
 	gravity = newval.gravity;
+	grounded = newval.grounded;
+	platformfallctr = newval.platformfallctr;
 }
 
 object::object(const double& xpos, const double& ypos, const int& width, const int& height, const double& gravity) {
@@ -43,13 +54,8 @@ object::object(const double& xpos, const double& ypos, const int& width, const i
 	this->gravity = gravity;
 }
 
-double object::getXCoord() {
-	return xcoord;
-}
-
-double object::getYCoord() {
-	return ycoord;
-}
+double object::getXCoord() { return xcoord; }
+double object::getYCoord() { return ycoord; }
 
 void object::setCoord(const double& newx, const double& newy) {
 	xcoord = newx;
@@ -113,41 +119,75 @@ bool object::isGrounded() {
 	return grounded;
 }
 
-void object::setGrounded(const bool newval) {
+void object::setGrounded(const bool& newval) {
 	grounded = newval;
 }
 
-physicsEngine::physicsEngine(){
-	player = object(200, 40, 40, 80, PLAYERGRAVITY);
-	door = object(400, 50, 40, 80, 0);
-	water = object(0, 60, 960, 10, 0);
-	platforms = vector<object>();
-	platforms.push_back(object(0, 200, 300, 10, 0));
+int object::getPFC() {
+	return this->platformfallctr;
 }
 
-physicsEngine::physicsEngine(object player, object door, object water, vector<object> platforms) {
+void object::setPFC(const int& pfc) {
+	this->platformfallctr = pfc;
+}
+
+physicsEngine::physicsEngine(): win(false), lose(false) {}
+physicsEngine::physicsEngine(const object& player, const object& door, const object& water, const vector<object>& platforms) {
 	this->player = player;
 	this->door = door;
 	this->water = water;
 	this->platforms = platforms;
+
+	win = false;
+	lose = false;
+}
+
+physicsEngine::physicsEngine(const string level) {
+	ifstream fileIn(prefix + level);
+	if (fileIn.fail()) cout << "fail" << endl;
+		string x, y, width, height;
+		getline(fileIn, x, '\t');
+		getline(fileIn, y, '\t');
+		getline(fileIn, width, '\t');
+		getline(fileIn, height);
+		player = object(stod(x), stod(y), stod(width), stod(height), PLAYERGRAVITY);
+		getline(fileIn, x, '\t');
+		getline(fileIn, y, '\t');
+		getline(fileIn, width, '\t');
+		getline(fileIn, height);
+		door = object(stod(x), stod(y), stod(width), stod(height), 0);
+		getline(fileIn, x, '\t');
+		getline(fileIn, y, '\t');
+		getline(fileIn, width, '\t');
+		getline(fileIn, height);
+		water = object(stod(x), stod(y), stod(width), stod(height), 0);
+		platforms = vector<object>();
+		while (getline(fileIn, x, '\t')){
+			getline(fileIn, y, '\t');
+			getline(fileIn, width, '\t');
+			getline(fileIn, height);
+			platforms.push_back(object(stod(x), stod(y), stod(width), stod(height), 0));
+		}
+
+		win = false;
+		lose = false;
 }
 
 void physicsEngine::updateObjects(const vector<bool> &keypresses) {
 	if(keypresses[0]){//up
 		if(player.isGrounded()){//simply checks if on the ground for basic jumps. may eventually include collision checks with wall etc for other functionality
-			player.setGrounded(false);
+			player.setGrounded(false); //change to the state of the character
 			player.setYSpeed(-JUMPSPEED);//jump, initial bump in upward velocity
-		}else{
+		} else {
 			//maintain jump. will allow better height if held, will probably not apply if the player is already moving down, or nearing the top of the jump, as this makes things feel floaty
 			if(player.getYSpeed() <= -(JUMPSPEED/10)){
 				player.addYSpeed(-PLAYERGRAVITY/2);
 			}
-
 		}
 	}
 	if(keypresses[4]){//space, separate from up in case we implement ladders or such
 		if(player.isGrounded()){//simply checks if on the ground for basic jumps. may eventually include collision checks with wall etc for other functionality
-			player.setGrounded(false);
+			player.setGrounded(false); //change to the state of the character
 			player.setYSpeed(-JUMPSPEED);//jump, initial bump in upward velocity
 		}else{
 			//maintain jump. will allow better height if held, will probably not apply if the player is already moving down, or nearing the top of the jump, as this makes things feel floaty
@@ -190,23 +230,42 @@ void physicsEngine::updateObjects(const vector<bool> &keypresses) {
 		double* temp = getMaxVector(player, platforms.at(i));
 		if(abs(temp[0]) < abs(movement[0])){//hit a wall, x vector is closer to 0
 			movement[0] = temp[0];
+            player.setXSpeed(0);
 		}
 		if(temp[1] < movement[1] && movement[1] > 0){//hit a floor
 			movement[1] = temp[1];
+            player.setYSpeed(0);
 			player.setGrounded(true);//only ground on floor hit, not ceiling hit
+			platforms.at(i).setPFC(platforms.at(i).getPFC() + 1);
+			if(platforms.at(i).getPFC() > FALLTHRESHOLD) {
+				platforms.at(i).setYSpeed(platforms.at(i).getYSpeed() + 0.2);
+			}
 		}else if(temp[1] > movement[1] && movement[1] < 0){//hit a ceiling
 			movement[1] = temp[1];
+			player.setYSpeed(0);
 		}
+
+		platforms.at(i).addCoord(0, platforms.at(i).getYSpeed());
+
+		delete[] temp;
 	}
+
 	//if no collisions, move object (before checking the next object), else compute collision behavior
-	player.addCoord(movement[0], movement[1]);
+    player.addCoord(movement[0], movement[1]);
 	delete[] movement;
 
+	//move water up screen
+	water.setCoord(water.getXCoord(), water.getYCoord() - 1);
+
 	//check door and water for win/loss
+	if(checkIntersection(player, door)){
+        this->win = true;   //Win Condition
+	}else if(checkIntersection(player, water)){
+        this->lose = true;	//Lose Condition
+	}
 }
 
 bool physicsEngine::checkIntersection(object obj1, object obj2) {
-
 	for(int i = 0; i < obj1.getWidth(); ++i) {
 		int x = obj1.getXCoord() + i;
 		int topy = obj1.getYCoord();
@@ -246,6 +305,13 @@ double* physicsEngine::getMaxVector(object obj1, object obj2) {
 		segments++;
 	}
 
+	//if it doesn't collide
+	if(!checkIntersection(obj1copy, obj2)){
+		result[0] = obj1.getXSpeed();
+		result[1] = obj1.getYSpeed();
+		return result;
+	}
+
 	//correct for bullet paper problem
 	//if(segments > 0) { segments should always be greater than 0, otherwise obj1 is already inside obj2
 
@@ -262,20 +328,25 @@ double* physicsEngine::getMaxVector(object obj1, object obj2) {
 }
 
 vector<object> physicsEngine::getState() {
-
 	vector<object> tempVec {};
 
 	// add player -> door -> water
-	tempVec.push_back (player);
-	tempVec.push_back (door);
-	tempVec.push_back (water);
+	tempVec.push_back (player); 	//index 0 in vector
+	tempVec.push_back (door);		//index 1 in vector
+	tempVec.push_back (water);		//index 2 in vector
 
 	// fill tempVec with lots of data - iterate through platform vector and add to temp vec
 	for(int i=0; i < platforms.size(); i++){
-		tempVec.push_back (platforms[i]);
+		tempVec.push_back (platforms[i]); //index 2+i in vector
 	}
 
-
 	return tempVec;
+}
 
+bool physicsEngine::getWinState() {
+	return this->win;
+}
+
+bool physicsEngine::getLoseState() {
+	return this->lose;
 }

@@ -1,7 +1,7 @@
 #include "keyboardInput.h"
 
 keyboardInput::keyboardInput() { //on start, the keys will be initialized to false, but will never be forced back to false to avoid rapid switching
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 8; i++) {
         keyStates.push_back(false);
     }
 }
@@ -50,6 +50,18 @@ vector<bool> keyboardInput::getKeyboardInput() { //called by controller, to chec
     } else {
         keyStates[5] = false;
     }
+
+    if (currentKeyStates[ SDL_SCANCODE_ESCAPE ]) {
+          keyStates[5] = true;
+      } else {
+          keyStates[5] = false;
+      }
+
+    if (currentKeyStates[ SDL_SCANCODE_RETURN ]) {
+          keyStates[6] = true;
+      } else {
+          keyStates[6] = false;
+      }
 
     return keyStates; //return the vector with the updated boolean values
 }

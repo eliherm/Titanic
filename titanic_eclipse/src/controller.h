@@ -5,6 +5,9 @@
 #include <vector>
 #include "keyboardInput.h"
 #include "physics.h"
+#include "sprite.h"
+#include "view.h"
+
 using namespace std;
 
 int main(int argc, char *argv[]);
@@ -12,11 +15,11 @@ int main(int argc, char *argv[]);
 class Controller {
 public:
 	Controller(int fps, int tps);
-	void run();
-	vector<object> getVisibleObjects(const int, const int);
+	void run();							//now also contains all menu information
+	vector<object> getVisibleObjects(const int&, const int&);
 	vector<bool> getKeyStates();
 	void getGraphicData();
-	bool running;
+	bool running = false;
 
     physicsEngine activeEngine; // will not always be the only reference to an engine, simply to denote which engine is action in the event we have two at once
     gameDisplay activeScreen;
@@ -24,6 +27,8 @@ public:
 private:
 	int f_time;
 	int t_time;
+	int level = 1;
+	bool inmenu;
 
 	void doPhysics();
 	void doFrame();

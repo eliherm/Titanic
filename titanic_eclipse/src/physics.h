@@ -27,9 +27,11 @@ public:
     void addYSpeed(const double& newval);
     double getGrav();
     void setGrav(const double& newval);
-    bool containsPoint(const double& x, const double& y);
     bool isGrounded();
-    void setGrounded(const bool newval);
+    void setGrounded(const bool& newval);
+    int getPFC();
+    void setPFC(const int& pfc);
+    // bool containsPoint(const double& x, const double& y);
 private:
     bool grounded = true;
     double xcoord;
@@ -38,6 +40,7 @@ private:
     int height;
     double xspeed;
     double yspeed;
+    int platformfallctr = 0;
     //double speed; //speed in pixels/s
     //double direction; //direction of movement in radii
     double gravity; //acceleration due to gravity in pixels/s^2
@@ -46,14 +49,20 @@ private:
 class physicsEngine {
 public:
 	physicsEngine();
-    physicsEngine(object player, object door, object water, vector<object> platforms);
+	physicsEngine(const string level);
+    physicsEngine(const object& player, const object& door, const object& water,const vector<object>& platforms);
     void updateObjects(const vector<bool> &keypresses); //needs to take whatever the data format for key press input is
     vector<object> getState();
     bool checkIntersection(object obj1, object obj2);
     double* getMaxVector(object obj1, object obj2);
+    bool getWinState();
+    bool getLoseState();
 private:
     object player;
     object door;
     object water;
     vector<object> platforms;
+
+    bool win;
+    bool lose;
 };
