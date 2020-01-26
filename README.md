@@ -1,2 +1,2 @@
 # Titanic
-A vertical platform game based inspired by the RMS Titanic
+A vertical platform game inspired by the RMS Titanic
